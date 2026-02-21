@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Agent — Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #110721;
+    --bg-slide: #1A0B2E;
+    --text-primary: #FFFFFF;
+    --text-muted: #7B6B8D;
+    --accent: #A855F7;
+    --accent-glow: rgba(168, 85, 247, 0.25);
+    --font-heading: 'Urbanist', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-primary);
+    font-family: var(--font-body);
+  }
+
+  /* Presentation Container */
+  .presentation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Slide Frame */
+  .slide-frame {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide-frame iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Navigation Zones (invisible clickable areas) */
+  .nav-zone {
+    position: absolute;
+    top: 0;
+    bottom: 60px;
+    width: 30%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+  }
+
+  .nav-zone:hover {
+    opacity: 1;
+  }
+
+  .nav-zone.prev {
+    left: 0;
+    background: linear-gradient(to right, rgba(0,0,0,0.3), transparent);
+  }
+
+  .nav-zone.next {
+    right: 0;
+    background: linear-gradient(to left, rgba(0,0,0,0.3), transparent);
+  }
+
+  .nav-zone svg {
+    width: 48px;
+    height: 48px;
+    stroke: rgba(255,255,255,0.5);
+    stroke-width: 2;
+    fill: none;
+  }
+
+  /* Control Bar */
+  .control-bar {
+    height: 60px;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 20;
+  }
+
+  .control-left,
+  .control-center,
+  .control-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .control-center {
+    flex: 1;
+    justify-content: center;
+  }
+
+  /* Buttons */
+  .btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 8px 16px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+
+  .btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .btn-icon {
+    padding: 8px;
+  }
+
+  /* Slide Counter */
+  .slide-counter {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slide-counter .current {
+    color: var(--accent);
+    font-weight: 700;
+    min-width: 24px;
+    text-align: right;
+  }
+
+  .slide-counter .divider {
+    color: var(--text-muted);
+  }
+
+  .slide-counter .total {
+    color: var(--text-muted);
+    min-width: 24px;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    z-index: 30;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+    transition: width 0.3s ease;
+  }
+
+  /* Keyboard Hints */
+  .keyboard-hints {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 16px;
+  }
+
+  .keyboard-hints kbd {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 10px;
+  }
+
+  /* Fullscreen mode - hide control bar, show on hover */
+  .presentation.fullscreen .control-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateY(100%);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .presentation.fullscreen:hover .control-bar {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .presentation.fullscreen .nav-zone {
+    bottom: 0;
+  }
+
+  .presentation.fullscreen .progress-bar {
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .presentation.fullscreen:hover .progress-bar {
+    opacity: 1;
+  }
+
+  /* Loading state */
+  .loading {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-slide);
+    color: var(--text-muted);
+    font-size: 14px;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .loading.visible {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="presentation" id="presentation">
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- Slide Frame -->
+  <div class="slide-frame">
+    <div class="loading" id="loading">Loading...</div>
+    <iframe id="slideFrame" src=""></iframe>
+
+    <!-- Navigation Zones -->
+    <div class="nav-zone prev" id="navPrev" title="Previous slide (←)">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </div>
+    <div class="nav-zone next" id="navNext" title="Next slide (→)">
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+  </div>
+
+  <!-- Control Bar -->
+  <div class="control-bar">
+    <div class="control-left">
+      <button class="btn btn-icon" id="btnPrev" title="Previous (←)">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <button class="btn btn-icon" id="btnNext" title="Next (→)">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
+    </div>
+
+    <div class="control-center">
+      <div class="slide-counter">
+        <span class="current" id="slideCurrent">1</span>
+        <span class="divider">/</span>
+        <span class="total" id="slideTotal">1</span>
+      </div>
+    </div>
+
+    <div class="control-right">
+      <div class="keyboard-hints">
+        <span><kbd>←</kbd> <kbd>→</kbd> Navigate</span>
+        <span><kbd>F</kbd> Fullscreen</span>
+        <span><kbd>O</kbd> Overview</span>
+      </div>
+      <button class="btn" id="btnFullscreen" title="Fullscreen (F)">
+        <svg viewBox="0 0 24 24" id="fullscreenIcon">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        </svg>
+        Fullscreen
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Slide Configuration
+const SLIDES = [
+  'slides/01-title.html',
+  'slides/02-overview.html',
+  'slides/03-highlight.html',
+];
+
+// State
+let currentIndex = 0;
+
+// DOM Elements
+const presentation = document.getElementById('presentation');
+const slideFrame = document.getElementById('slideFrame');
+const progressFill = document.getElementById('progressFill');
+const slideCurrent = document.getElementById('slideCurrent');
+const slideTotal = document.getElementById('slideTotal');
+const loading = document.getElementById('loading');
+const navPrev = document.getElementById('navPrev');
+const navNext = document.getElementById('navNext');
+const btnPrev = document.getElementById('btnPrev');
+const btnNext = document.getElementById('btnNext');
+const btnFullscreen = document.getElementById('btnFullscreen');
+
+// Initialize
+function init() {
+  slideTotal.textContent = SLIDES.length;
+  loadSlide(0);
+
+  // Check for URL hash to start at specific slide
+  const hash = window.location.hash.slice(1);
+  if (hash) {
+    const slideNum = parseInt(hash, 10);
+    if (slideNum > 0 && slideNum <= SLIDES.length) {
+      loadSlide(slideNum - 1);
+    }
+  }
+}
+
+// Load slide by index
+function loadSlide(index) {
+  if (index < 0 || index >= SLIDES.length) return;
+
+  currentIndex = index;
+  const slidePath = SLIDES[index];
+
+  // Show loading
+  loading.classList.add('visible');
+
+  // Update iframe
+  slideFrame.src = slidePath;
+
+  // Update UI
+  updateUI();
+
+  // Update URL hash
+  window.location.hash = index + 1;
+
+  // Hide loading when frame loads
+  slideFrame.onload = () => {
+    loading.classList.remove('visible');
+  };
+}
+
+// Update UI elements
+function updateUI() {
+  slideCurrent.textContent = currentIndex + 1;
+  progressFill.style.width = ((currentIndex + 1) / SLIDES.length * 100) + '%';
+
+  // Disable prev/next buttons at boundaries
+  btnPrev.disabled = currentIndex === 0;
+  btnNext.disabled = currentIndex === SLIDES.length - 1;
+  navPrev.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
+  navNext.style.pointerEvents = currentIndex === SLIDES.length - 1 ? 'none' : 'auto';
+}
+
+// Navigation
+function nextSlide() {
+  if (currentIndex < SLIDES.length - 1) {
+    loadSlide(currentIndex + 1);
+  }
+}
+
+function prevSlide() {
+  if (currentIndex > 0) {
+    loadSlide(currentIndex - 1);
+  }
+}
+
+function firstSlide() {
+  loadSlide(0);
+}
+
+function lastSlide() {
+  loadSlide(SLIDES.length - 1);
+}
+
+// Fullscreen
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    presentation.requestFullscreen().then(() => {
+      presentation.classList.add('fullscreen');
+    }).catch(err => {
+      console.log('Fullscreen error:', err);
+    });
+  } else {
+    document.exitFullscreen().then(() => {
+      presentation.classList.remove('fullscreen');
+    });
+  }
+}
+
+// Event Listeners
+navPrev.addEventListener('click', prevSlide);
+navNext.addEventListener('click', nextSlide);
+btnPrev.addEventListener('click', prevSlide);
+btnNext.addEventListener('click', nextSlide);
+btnFullscreen.addEventListener('click', toggleFullscreen);
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  // Don't handle if user is typing in an input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'ArrowDown':
+    case ' ':
+    case 'PageDown':
+      e.preventDefault();
+      nextSlide();
+      break;
+    case 'ArrowLeft':
+    case 'ArrowUp':
+    case 'PageUp':
+      e.preventDefault();
+      prevSlide();
+      break;
+    case 'Home':
+      e.preventDefault();
+      firstSlide();
+      break;
+    case 'End':
+      e.preventDefault();
+      lastSlide();
+      break;
+    case 'f':
+    case 'F':
+      e.preventDefault();
+      toggleFullscreen();
+      break;
+    case 'o':
+    case 'O':
+      e.preventDefault();
+      // TODO: Overview mode
+      console.log('Overview mode not yet implemented');
+      break;
+    case 'Escape':
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+        presentation.classList.remove('fullscreen');
+      }
+      break;
+  }
+});
+
+// Handle fullscreen change events
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    presentation.classList.remove('fullscreen');
+  }
+});
+
+// Touch/swipe support for mobile
+let touchStartX = 0;
+let touchEndX = 0;
+
+slideFrame.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+slideFrame.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  handleSwipe();
+}, { passive: true });
+
+function handleSwipe() {
+  const diff = touchStartX - touchEndX;
+  const threshold = 50;
+
+  if (Math.abs(diff) > threshold) {
+    if (diff > 0) {
+      nextSlide();
+    } else {
+      prevSlide();
+    }
+  }
+}
+
+// Start
+init();
+</script>
+
+</body>
+</html>

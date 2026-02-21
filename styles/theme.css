@@ -1,0 +1,403 @@
+/* LLM Agent Slides - Theme Styles */
+
+:root {
+  --bg-primary: #110721;
+  --bg-slide: #1A0B2E;
+  --bg-card: rgba(255,255,255,0.04);
+  --bg-card-hover: rgba(255,255,255,0.08);
+  --text-primary: #FFFFFF;
+  --text-secondary: #B8A9CC;
+  --text-muted: #7B6B8D;
+  --accent: #A855F7;
+  --accent-glow: rgba(168, 85, 247, 0.25);
+  --accent-soft: #C084FC;
+  --font-heading: 'Urbanist', sans-serif;
+  --font-body: 'IBM Plex Sans', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-slide);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+/* Slide Base */
+.slide {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slide::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.slide-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 64px 72px;
+}
+
+/* ===== TITLE SLIDE ===== */
+.slide-title .slide-inner {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.slide-title .tag {
+  display: inline-block;
+  padding: 6px 20px;
+  border: 1px solid rgba(168,85,247,0.3);
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent-soft);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.slide-title h1 {
+  font-family: var(--font-heading);
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  max-width: 700px;
+}
+
+.slide-title .subtitle {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.slide-title .divider {
+  width: 48px;
+  height: 2px;
+  background: var(--accent);
+  margin: 24px auto;
+  border-radius: 2px;
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.slide-title .author {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* ===== CONTENT SLIDE ===== */
+.slide-content .slide-inner {
+  justify-content: center;
+  gap: 0;
+}
+
+.slide-content .section-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.slide-content h2 {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.slide-content .lead {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+
+.slide-content .cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.slide-content .card {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  padding: 24px;
+  transition: background 0.2s;
+}
+
+.slide-content .card-number {
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.slide-content .card-title {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.slide-content .card-desc {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ===== HIGHLIGHT SLIDE ===== */
+.slide-highlight .slide-inner {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.slide-highlight .big-number {
+  font-family: var(--font-heading);
+  font-size: 96px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-soft), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.slide-highlight .stat-label {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 40px;
+  letter-spacing: 0.5px;
+}
+
+.slide-highlight .quote-line {
+  width: 32px;
+  height: 2px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 auto 28px;
+  border-radius: 2px;
+}
+
+.slide-highlight blockquote {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.6;
+  max-width: 600px;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.slide-highlight .attribution {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ===== TWO-COLUMN SLIDE ===== */
+.slide-two-column .slide-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.slide-two-column .left-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-two-column .right-column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-two-column .section-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.slide-two-column h2 {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.slide-two-column p {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ===== LIST SLIDE ===== */
+.slide-list .slide-inner {
+  justify-content: center;
+}
+
+.slide-list .section-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.slide-list h2 {
+  font-family: var(--font-heading);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 32px;
+  line-height: 1.2;
+}
+
+.slide-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.slide-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.slide-list .bullet {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-top: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.slide-list .item-content {
+  flex: 1;
+}
+
+.slide-list .item-title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.slide-list .item-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ===== CODE SLIDE ===== */
+.slide-code .slide-inner {
+  justify-content: center;
+}
+
+.slide-code .section-label {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.slide-code h2 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+}
+
+.slide-code pre {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 24px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.slide-code code {
+  font-family: inherit;
+}
+
+/* Code syntax highlighting */
+.slide-code .keyword { color: #C084FC; }
+.slide-code .string { color: #A5D6A7; }
+.slide-code .comment { color: var(--text-muted); font-style: italic; }
+.slide-code .function { color: #7DD3FC; }
+.slide-code .number { color: #FCA5A5; }

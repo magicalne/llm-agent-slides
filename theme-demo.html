@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theme Demo — Deep Purple</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #110721;
+    --bg-slide: #1A0B2E;
+    --bg-card: rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.08);
+    --text-primary: #FFFFFF;
+    --text-secondary: #B8A9CC;
+    --text-muted: #7B6B8D;
+    --accent: #A855F7;
+    --accent-glow: rgba(168, 85, 247, 0.25);
+    --accent-soft: #C084FC;
+    --font-heading: 'Urbanist', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 48px;
+  }
+
+  /* Page header */
+  .page-header {
+    text-align: center;
+    max-width: 600px;
+  }
+  .page-header h1 {
+    font-family: var(--font-heading);
+    font-weight: 300;
+    font-size: 14px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* Slide container */
+  .slide {
+    width: 960px;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    background: var(--bg-slide);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(168, 85, 247, 0.08),
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 120px rgba(168, 85, 247, 0.06);
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .slide-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 72px;
+  }
+
+  /* Slide label */
+  .slide-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  /* ===== SLIDE 1: Title Slide ===== */
+  .slide-1 .slide-inner {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .slide-1 .tag {
+    display: inline-block;
+    padding: 6px 20px;
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-soft);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .slide-1 h2 {
+    font-family: var(--font-heading);
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    max-width: 700px;
+  }
+
+  .slide-1 .subtitle {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  .slide-1 .divider {
+    width: 48px;
+    height: 2px;
+    background: var(--accent);
+    margin: 24px auto;
+    border-radius: 2px;
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+
+  .slide-1 .author {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  /* ===== SLIDE 2: Content Slide ===== */
+  .slide-2 .slide-inner {
+    justify-content: center;
+    gap: 0;
+  }
+
+  .slide-2 .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .slide-2 h2 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .slide-2 .lead {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 36px;
+    max-width: 520px;
+  }
+
+  .slide-2 .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .slide-2 .card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 24px;
+    transition: background 0.2s;
+  }
+
+  .slide-2 .card-number {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .slide-2 .card-title {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .slide-2 .card-desc {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* ===== SLIDE 3: Quote / Highlight ===== */
+  .slide-3 .slide-inner {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .slide-3 .big-number {
+    font-family: var(--font-heading);
+    font-size: 96px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-soft), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+
+  .slide-3 .stat-label {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    letter-spacing: 0.5px;
+  }
+
+  .slide-3 .quote-line {
+    width: 32px;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 auto 28px;
+    border-radius: 2px;
+  }
+
+  .slide-3 blockquote {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-primary);
+    line-height: 1.6;
+    max-width: 600px;
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+
+  .slide-3 .attribution {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  /* ===== THEME SPEC BAR ===== */
+  .spec-bar {
+    width: 960px;
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+    padding: 28px 36px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 10px;
+  }
+
+  .spec-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .spec-group .spec-label {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .spec-group .spec-value {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+
+  .font-sample {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .font-sample.heading { font-family: var(--font-heading); }
+  .font-sample.body { font-family: var(--font-body); }
+</style>
+</head>
+<body>
+
+<!-- Page Header -->
+<div class="page-header">
+  <h1>Theme Preview</h1>
+  <p>Deep purple background · White typography · Tech / Product</p>
+</div>
+
+<!-- Theme Spec Bar -->
+<div class="spec-bar">
+  <div class="spec-group">
+    <span class="spec-label">Background</span>
+    <span class="spec-value"><span class="color-dot" style="background:#1A0B2E;"></span> #1A0B2E</span>
+  </div>
+  <div class="spec-group">
+    <span class="spec-label">Text Primary</span>
+    <span class="spec-value"><span class="color-dot" style="background:#FFFFFF;"></span> #FFFFFF</span>
+  </div>
+  <div class="spec-group">
+    <span class="spec-label">Text Secondary</span>
+    <span class="spec-value"><span class="color-dot" style="background:#B8A9CC;"></span> #B8A9CC</span>
+  </div>
+  <div class="spec-group">
+    <span class="spec-label">Accent</span>
+    <span class="spec-value"><span class="color-dot" style="background:#A855F7;"></span> #A855F7</span>
+  </div>
+  <div class="spec-group">
+    <span class="spec-label">Heading Font</span>
+    <span class="spec-value">Urbanist</span>
+    <span class="font-sample heading">AaBbCc 123</span>
+  </div>
+  <div class="spec-group">
+    <span class="spec-label">Body Font</span>
+    <span class="spec-value">IBM Plex Sans</span>
+    <span class="font-sample body">AaBbCc 123</span>
+  </div>
+</div>
+
+<!-- Slide 1: Title -->
+<p class="slide-label">Slide 1 — Title</p>
+<div class="slide slide-1">
+  <div class="slide-inner">
+    <span class="tag">Sharing Session</span>
+    <h2>Building the Future of Product</h2>
+    <p class="subtitle">A deep dive into our roadmap, design principles, and the technology behind the next generation.</p>
+    <div class="divider"></div>
+    <p class="author">Your Name · February 2026</p>
+  </div>
+</div>
+
+<!-- Slide 2: Content -->
+<p class="slide-label">Slide 2 — Content</p>
+<div class="slide slide-2">
+  <div class="slide-inner">
+    <span class="section-label">Our Approach</span>
+    <h2>Three Pillars of Innovation</h2>
+    <p class="lead">Every great product is built on a foundation of clarity, craft, and continuous learning.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-number">01</div>
+        <div class="card-title">User-Centered Design</div>
+        <div class="card-desc">Start with real problems. Validate early. Iterate with empathy and data.</div>
+      </div>
+      <div class="card">
+        <div class="card-number">02</div>
+        <div class="card-title">Technical Excellence</div>
+        <div class="card-desc">Clean architecture, scalable systems, and relentless focus on performance.</div>
+      </div>
+      <div class="card">
+        <div class="card-number">03</div>
+        <div class="card-title">Rapid Iteration</div>
+        <div class="card-desc">Ship fast, learn faster. Tight feedback loops drive compounding progress.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Highlight -->
+<p class="slide-label">Slide 3 — Highlight</p>
+<div class="slide slide-3">
+  <div class="slide-inner">
+    <div class="big-number">10×</div>
+    <p class="stat-label">faster iteration cycles since adopting our new framework</p>
+    <div class="quote-line"></div>
+    <blockquote>"The best products aren't built in isolation — they emerge from conversations between teams, users, and the technology itself."</blockquote>
+    <p class="attribution">— Product Philosophy, 2026</p>
+  </div>
+</div>
+
+</body>
+</html>
