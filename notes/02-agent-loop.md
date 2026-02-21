@@ -126,7 +126,6 @@ def agent_loop(user_input, tools, max_iterations=10):
 |-------|-------------|--------------|
 | Claude Code | Coding assistant | File system tools, terminal access |
 | OpenAI Operator | Web browser agent | Browser automation tools |
-| Cursor | IDE coding agent | Code context, file operations |
 
 ## Common Patterns
 
