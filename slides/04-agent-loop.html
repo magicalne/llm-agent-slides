@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 4 - The Agent Loop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-agent-loop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 64px;
+  }
+
+  .slide-header {
+    margin-bottom: 32px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-content-area {
+    display: flex;
+    gap: 40px;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  /* === DIAGRAM SECTION === */
+  .diagram-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .diagram-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Flow Diagram */
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .flow-box {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 160px;
+    position: relative;
+  }
+
+  .flow-box.user-box {
+    background: rgba(96, 165, 250, 0.15);
+    border: 1px solid rgba(96, 165, 250, 0.3);
+    color: #60A5FA;
+  }
+
+  .flow-box.llm-box {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: var(--accent);
+    min-width: 200px;
+  }
+
+  .flow-box.tool-box {
+    background: rgba(251, 146, 60, 0.15);
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    color: #FB923C;
+  }
+
+  .flow-box.response-box {
+    background: rgba(74, 222, 128, 0.15);
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    color: #4ADE80;
+  }
+
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--text-muted);
+  }
+
+  .flow-branch {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .branch-line {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    width: 2px;
+    height: 16px;
+    background: rgba(255,255,255,0.2);
+  }
+
+  .branch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .branch-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  /* Loop indicator */
+  .loop-arrow {
+    position: absolute;
+    right: -60px;
+    top: 50%;
+    width: 50px;
+    height: 80px;
+    border: 2px solid rgba(168, 85, 247, 0.3);
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .loop-arrow.visible {
+    opacity: 1;
+  }
+
+  .loop-arrow::after {
+    content: '↩';
+    position: absolute;
+    bottom: -12px;
+    left: -8px;
+    font-size: 16px;
+    color: var(--accent);
+  }
+
+  /* === CODE SECTION === */
+  .code-section {
+    flex: 1.2;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .code-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .code-block {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+  }
+
+  .code-comment { color: var(--text-muted); }
+  .code-keyword { color: #C084FC; }
+  .code-string { color: #A5D6A7; }
+  .code-role { font-weight: 500; }
+  .code-role-system { color: #F472B6; }
+  .code-role-user { color: #60A5FA; }
+  .code-role-assistant { color: #4ADE80; }
+  .code-role-tool { color: #FB923C; }
+  .code-func { color: #7DD3FC; }
+  .code-var { color: var(--text-primary); }
+
+  .code-highlight {
+    background: rgba(168, 85, 247, 0.15);
+    border-left: 2px solid var(--accent);
+    margin: 0 -20px;
+    padding: 8px 20px;
+  }
+
+  /* === ROLES SECTION === */
+  .roles-section {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .roles-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .role-card {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .role-card .role-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .role-card.system .role-name { color: #F472B6; }
+  .role-card.user .role-name { color: #60A5FA; }
+  .role-card.assistant .role-name { color: #4ADE80; }
+  .role-card.tool .role-name { color: #FB923C; }
+
+  .role-card .role-desc {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Step indicator */
+  .step-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 32px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-agent-loop">
+  <div class="slide-header">
+    <div class="section-label">How It Works</div>
+    <h1>The Agent Loop</h1>
+  </div>
+
+  <div class="slide-content-area">
+    <!-- Step 1 & 2: Diagram -->
+    <div class="diagram-section" id="diagramSection">
+      <div class="flow-diagram">
+        <!-- User Input -->
+        <div class="flow-box user-box">
+          User: "Book a flight to Tokyo"
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <!-- Messages Array -->
+        <div class="flow-box" style="background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.15); color: var(--text-secondary);">
+          <div style="font-size: 11px; margin-bottom: 4px;">messages = [</div>
+          <div id="messagesContent" style="font-family: 'JetBrains Mono'; font-size: 10px; text-align: left; padding-left: 12px;">
+            <!-- Filled by JS based on step -->
+          </div>
+          <div style="font-size: 11px;">]</div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <!-- LLM -->
+        <div class="flow-box llm-box" style="position: relative;">
+          LLM (Reason & Decide)
+          <div class="loop-arrow" id="loopArrow"></div>
+        </div>
+        <div class="flow-arrow">↓</div>
+
+        <!-- Branch -->
+        <div class="flow-branch">
+          <div class="branch-item">
+            <div class="branch-label">tool_call</div>
+            <div class="flow-box tool-box">
+              Tool: search_flights()
+            </div>
+            <div class="flow-arrow">↓</div>
+            <div class="flow-box" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(251,146,60,0.2); color: #FB923C; font-size: 11px;">
+              tool_result → messages
+            </div>
+          </div>
+          <div class="branch-item">
+            <div class="branch-label">end_turn</div>
+            <div class="flow-box response-box">
+              Final Response
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Pseudocode -->
+    <div class="code-section" id="codeSection">
+      <div class="code-block">
+        <div class="code-comment"># Initialize messages with roles</div>
+        <div><span class="code-var">messages</span> = [</div>
+        <div style="padding-left: 16px;">
+          { <span class="code-role code-role-system">role: "system"</span>,
+          <span class="code-string">"You can search flights and weather"</span> },
+        </div>
+        <div style="padding-left: 16px;">
+          { <span class="code-role code-role-user">role: "user"</span>,
+          <span class="code-string">"Book a flight to Tokyo"</span> }
+        </div>
+        <div>]</div>
+        <br>
+        <div><span class="code-keyword">while</span> <span class="code-var">True</span>:</div>
+        <div style="padding-left: 16px;">
+          <span class="code-var">response</span> = <span class="code-func">llm.generate</span>(messages, tools)
+        </div>
+        <br>
+        <div id="codePart1" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-keyword">if</span> response.<span class="code-var">finish_reason</span> == <span class="code-string">"stop"</span>:
+        </div>
+        <div id="codePart2" style="padding-left: 32px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-keyword">return</span> response.<span class="code-var">content</span>  <span class="code-comment"># → User</span>
+        </div>
+        <br>
+        <div id="codePart3" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-comment"># Tool call needed</span>
+        </div>
+        <div id="codePart4" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-var">tool_result</span> = <span class="code-func">execute</span>(response.<span class="code-var">tool_call</span>)
+        </div>
+        <br>
+        <div id="codePart5" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          messages.<span class="code-func">append</span>({
+        </div>
+        <div id="codePart6" style="padding-left: 32px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-role code-role-assistant">role: "assistant"</span>, tool_calls=[...]
+        </div>
+        <div id="codePart7" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          })
+        </div>
+        <div id="codePart8" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          messages.<span class="code-func">append</span>({
+        </div>
+        <div id="codePart9" style="padding-left: 32px; opacity: 0; transition: opacity 0.5s;">
+          <span class="code-role code-role-tool">role: "tool"</span>, content=tool_result
+        </div>
+        <div id="codePart10" style="padding-left: 16px; opacity: 0; transition: opacity 0.5s;">
+          })  <span class="code-comment"># ← Loop continues</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Message Roles -->
+  <div class="roles-section" id="rolesSection">
+    <div class="role-card system">
+      <div class="role-name">system</div>
+      <div class="role-desc">Defines behavior & available tools</div>
+    </div>
+    <div class="role-card user">
+      <div class="role-name">user</div>
+      <div class="role-desc">Input task from human</div>
+    </div>
+    <div class="role-card assistant">
+      <div class="role-name">assistant</div>
+      <div class="role-desc">LLM response or tool call decision</div>
+    </div>
+    <div class="role-card tool">
+      <div class="role-name">tool</div>
+      <div class="role-desc">Result from tool execution</div>
+    </div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">4</span>
+  </div>
+</div>
+
+<script>
+const totalSteps = 4;
+let currentStep = 0;
+
+// DOM elements
+const diagramSection = document.getElementById('diagramSection');
+const codeSection = document.getElementById('codeSection');
+const rolesSection = document.getElementById('rolesSection');
+const loopArrow = document.getElementById('loopArrow');
+const messagesContent = document.getElementById('messagesContent');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+// Code parts
+const codeParts = [
+  'codePart1', 'codePart2', 'codePart3', 'codePart4',
+  'codePart5', 'codePart6', 'codePart7', 'codePart8',
+  'codePart9', 'codePart10'
+];
+
+stepTotal.textContent = totalSteps;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset all
+  diagramSection.classList.remove('visible');
+  codeSection.classList.remove('visible');
+  rolesSection.classList.remove('visible');
+  loopArrow.classList.remove('visible');
+  codeParts.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.opacity = '0';
+  });
+
+  // Step 1: Show diagram with basic structure
+  if (step >= 0) {
+    diagramSection.classList.add('visible');
+    messagesContent.innerHTML = `
+      <div style="color: #F472B6;">system: "You are a..."</div>
+      <div style="color: #60A5FA;">user: "Book a flight..."</div>
+    `;
+  }
+
+  // Step 2: Show code section, messages highlighted
+  if (step >= 1) {
+    codeSection.classList.add('visible');
+    loopArrow.classList.add('visible');
+    messagesContent.innerHTML = `
+      <div style="color: #F472B6;">system: "You are a..."</div>
+      <div style="color: #60A5FA;">user: "Book a flight..."</div>
+      <div style="color: #4ADE80;">assistant: [tool_calls]</div>
+      <div style="color: #FB923C;">tool: "JFK→NRT $890"</div>
+    `;
+  }
+
+  // Step 3: Show full pseudocode
+  if (step >= 2) {
+    codeParts.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '1';
+    });
+  }
+
+  // Step 4: Show roles section
+  if (step >= 3) {
+    rolesSection.classList.add('visible');
+  }
+
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
