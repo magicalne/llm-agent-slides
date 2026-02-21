@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline - Evolution of LLM Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-timeline {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 72px;
+  }
+
+  .timeline-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .timeline-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .timeline-header h1 {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .timeline-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* Timeline Container */
+  .timeline-container {
+    position: relative;
+    padding: 0 40px;
+    margin-bottom: 40px;
+  }
+
+  /* Timeline Line - positioned through the dots */
+  .timeline-line {
+    position: absolute;
+    top: 74px; /* padding-top(32px) + year(32px) + half-dot(10px) */
+    left: 100px;
+    right: 100px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    z-index: 0;
+  }
+
+  .timeline-line-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    box-shadow: 0 0 12px var(--accent-glow);
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* Timeline Events */
+  .timeline-events {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+    padding-top: 32px;
+    padding-bottom: 16px;
+  }
+
+  .timeline-event {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    width: 160px;
+  }
+
+  .timeline-event.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Event Year - Above the line */
+  .event-year {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    height: 24px;
+    line-height: 24px;
+    margin-bottom: 8px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  .timeline-event.visible .event-year {
+    opacity: 1;
+  }
+
+  /* Event Dot - On the line */
+  .event-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-slide);
+    border: 3px solid rgba(255,255,255,0.2);
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .timeline-event.visible .event-dot {
+    border-color: var(--accent);
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .timeline-event.active .event-dot {
+    background: var(--accent);
+    transform: scale(1.3);
+  }
+
+  /* Event Content - Below the line */
+  .event-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Event Title */
+  .event-title {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  /* Event Label */
+  .event-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* Detail Box */
+  .detail-box {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 24px 32px;
+    margin: 0 40px;
+    min-height: 120px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .detail-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .detail-box .detail-year {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .detail-box .detail-title {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .detail-box .detail-desc {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Step indicator */
+  .step-indicator {
+    position: absolute;
+    bottom: 24px;
+    right: 32px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-timeline">
+  <div class="timeline-header">
+    <div class="section-label">History</div>
+    <h1>The Evolution of LLM Agents</h1>
+    <p class="subtitle">From reasoning frameworks to production-ready systems</p>
+  </div>
+
+  <div class="timeline-container">
+    <div class="timeline-line">
+      <div class="timeline-line-progress" id="lineProgress"></div>
+    </div>
+    <div class="timeline-events">
+      <div class="timeline-event" data-step="0">
+        <div class="event-year">2022</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">ReAct Paper</div>
+          <div class="event-label">Reasoning + Acting</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="1">
+        <div class="event-year">Jun 2023</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Function Calling</div>
+          <div class="event-label">OpenAI API</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="2">
+        <div class="event-year">Mar 2024</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Agentic AI</div>
+          <div class="event-label">Andrew Ng's Talk</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="3">
+        <div class="event-year">2024</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Claude 3.5</div>
+          <div class="event-label">Tool Calling Focus</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="4">
+        <div class="event-year">2025</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Agent Era</div>
+          <div class="event-label">Claude Code & Beyond</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-box" id="detailBox">
+    <div class="detail-year" id="detailYear">2022</div>
+    <div class="detail-title" id="detailTitle">ReAct Paper</div>
+    <div class="detail-desc" id="detailDesc">Princeton and Google Research introduced the ReAct framework, combining Chain-of-Thought reasoning with action execution. The Thought → Action → Observation pattern became the foundation for modern agent architectures.</div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">5</span>
+  </div>
+</div>
+
+<script>
+// Event details
+const eventDetails = [
+  {
+    year: '2022',
+    title: 'ReAct Paper',
+    desc: 'Princeton and Google Research introduced the ReAct framework, combining Chain-of-Thought reasoning with action execution. The Thought → Action → Observation pattern became the foundation for modern agent architectures.'
+  },
+  {
+    year: 'June 2023',
+    title: 'OpenAI Function Calling',
+    desc: 'OpenAI introduced native function calling in their API, allowing LLMs to call external tools for the first time. This was a major milestone — LLMs could now ACT, not just generate text.'
+  },
+  {
+    year: 'March 2024',
+    title: 'Agentic AI Goes Mainstream',
+    desc: 'Andrew Ng\'s Snowflake Summit talk highlighted that agentic workflows can make smaller models outperform larger ones. GPT-3.5 with agentic workflow beat GPT-4 zero-shot on coding benchmarks.'
+  },
+  {
+    year: '2024',
+    title: 'Claude 3.5 Sonnet',
+    desc: 'Anthropic released Claude 3.5 Sonnet with a focus on coding and agent tasks. Post-training and RL specifically for tool calling dramatically improved precision and reliability.'
+  },
+  {
+    year: '2025',
+    title: 'The Agent Era Begins',
+    desc: 'Claude Code, OpenAI Operator, and other production agents emerge. Programmatic Tool Calling (PTC) solves context pollution. Agents are now ready for real-world applications.'
+  }
+];
+
+let currentStep = 0;
+const totalSteps = 5;
+
+// DOM elements
+const events = document.querySelectorAll('.timeline-event');
+const lineProgress = document.getElementById('lineProgress');
+const detailBox = document.getElementById('detailBox');
+const detailYear = document.getElementById('detailYear');
+const detailTitle = document.getElementById('detailTitle');
+const detailDesc = document.getElementById('detailDesc');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+// Initialize
+stepTotal.textContent = totalSteps;
+
+// Go to specific step
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+
+  currentStep = step;
+
+  // Update events visibility
+  events.forEach((event, index) => {
+    if (index <= step) {
+      event.classList.add('visible');
+      event.classList.toggle('active', index === step);
+    } else {
+      event.classList.remove('visible', 'active');
+    }
+  });
+
+  // Update line progress
+  const progress = (step / (totalSteps - 1)) * 100;
+  lineProgress.style.width = progress + '%';
+
+  // Update detail box
+  const detail = eventDetails[step];
+  detailYear.textContent = detail.year;
+  detailTitle.textContent = detail.title;
+  detailDesc.textContent = detail.desc;
+  detailBox.classList.add('visible');
+
+  // Update step indicator
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state - show first step
+goToStep(0);
+</script>
+
+</body>
+</html>

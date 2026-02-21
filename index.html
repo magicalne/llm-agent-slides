@@ -321,14 +321,26 @@
 
 <script>
 // Slide Configuration
+// Use object format for stepped slides: { file: 'path', steps: number }
 const SLIDES = [
   'slides/01-title.html',
   'slides/02-overview.html',
-  'slides/03-highlight.html',
+  { file: 'slides/03-timeline.html', steps: 5 },
+  'slides/04-highlight.html',
 ];
+
+// Helper to get slide config
+function getSlideConfig(index) {
+  const slide = SLIDES[index];
+  if (typeof slide === 'string') {
+    return { file: slide, steps: 1 };
+  }
+  return slide;
+}
 
 // State
 let currentIndex = 0;
+let currentStep = 0; // Current step within stepped slides
 
 // DOM Elements
 const presentation = document.getElementById('presentation');
@@ -345,6 +357,7 @@ const btnFullscreen = document.getElementById('btnFullscreen');
 
 // Initialize
 function init() {
+  // Count total slides (stepped slides count as 1 for display)
   slideTotal.textContent = SLIDES.length;
   loadSlide(0);
 
@@ -363,7 +376,9 @@ function loadSlide(index) {
   if (index < 0 || index >= SLIDES.length) return;
 
   currentIndex = index;
-  const slidePath = SLIDES[index];
+  currentStep = 0; // Reset step when loading new slide
+  const config = getSlideConfig(index);
+  const slidePath = config.file;
 
   // Show loading
   loading.classList.add('visible');
@@ -377,32 +392,82 @@ function loadSlide(index) {
   // Update URL hash
   window.location.hash = index + 1;
 
-  // Hide loading when frame loads
+  // Hide loading when frame loads and send initial step
   slideFrame.onload = () => {
     loading.classList.remove('visible');
+    // Notify slide of current step (0 for initial load)
+    sendStepToSlide(0);
   };
+}
+
+// Send step message to slide iframe
+function sendStepToSlide(step) {
+  const config = getSlideConfig(currentIndex);
+  if (config.steps > 1) {
+    slideFrame.contentWindow.postMessage({
+      type: 'goToStep',
+      step: step,
+      totalSteps: config.steps
+    }, '*');
+  }
 }
 
 // Update UI elements
 function updateUI() {
-  slideCurrent.textContent = currentIndex + 1;
+  const config = getSlideConfig(currentIndex);
+
+  // Show step indicator for stepped slides
+  if (config.steps > 1) {
+    slideCurrent.textContent = `${currentIndex + 1}.${currentStep + 1}`;
+  } else {
+    slideCurrent.textContent = currentIndex + 1;
+  }
+
   progressFill.style.width = ((currentIndex + 1) / SLIDES.length * 100) + '%';
 
-  // Disable prev/next buttons at boundaries
-  btnPrev.disabled = currentIndex === 0;
-  btnNext.disabled = currentIndex === SLIDES.length - 1;
-  navPrev.style.pointerEvents = currentIndex === 0 ? 'none' : 'auto';
-  navNext.style.pointerEvents = currentIndex === SLIDES.length - 1 ? 'none' : 'auto';
+  // Disable prev button at first slide and first step
+  const atFirstSlide = currentIndex === 0;
+  const atFirstStep = currentStep === 0;
+  btnPrev.disabled = atFirstSlide && atFirstStep;
+  navPrev.style.pointerEvents = (atFirstSlide && atFirstStep) ? 'none' : 'auto';
+
+  // Disable next button at last slide and last step
+  const atLastSlide = currentIndex === SLIDES.length - 1;
+  const atLastStep = currentStep >= config.steps - 1;
+  btnNext.disabled = atLastSlide && atLastStep;
+  navNext.style.pointerEvents = (atLastSlide && atLastStep) ? 'none' : 'auto';
 }
 
 // Navigation
 function nextSlide() {
+  const config = getSlideConfig(currentIndex);
+
+  // If current slide has steps and we're not at the last step
+  if (config.steps > 1 && currentStep < config.steps - 1) {
+    currentStep++;
+    sendStepToSlide(currentStep);
+    updateUI();
+    return;
+  }
+
+  // Otherwise, go to next slide
   if (currentIndex < SLIDES.length - 1) {
     loadSlide(currentIndex + 1);
   }
 }
 
 function prevSlide() {
+  const config = getSlideConfig(currentIndex);
+
+  // If we're not at the first step of a stepped slide
+  if (config.steps > 1 && currentStep > 0) {
+    currentStep--;
+    sendStepToSlide(currentStep);
+    updateUI();
+    return;
+  }
+
+  // Otherwise, go to previous slide
   if (currentIndex > 0) {
     loadSlide(currentIndex - 1);
   }
