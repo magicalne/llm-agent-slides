@@ -1,5 +1,49 @@
 # Additional Topics for LLM Agent Sharing
 
+## ARC: The Three Pillars of Modern Agents
+
+**ARC** = **A**gentic + **R**easoning + **C**oding
+
+### Agentic
+- **Definition**: Ability to interact with tools, APIs, and external systems autonomously
+- **Key Benchmarks**:
+  - TAU-Bench: Tests agent reliability in real business workflows
+  - BFCL (Berkeley Function Calling Leaderboard): Tool calling accuracy
+  - BrowseComp: Web browsing and information retrieval
+- **Why it matters**: Agents need to take action, not just generate text
+
+### Reasoning
+- **Definition**: Think through complex problems, plan multi-step solutions, adapt to novel situations
+- **Key Benchmarks**:
+  - ARC-AGI-2: "Fluid intelligence" - reasoning on unseen tasks
+  - AIME 24: Mathematical reasoning
+  - HLE (Humanity's Last Exam): Cross-domain academic knowledge + reasoning
+- **Why it matters**: Complex tasks require breaking down problems and planning
+
+### Coding
+- **Definition**: Write, debug, and execute code to solve real problems
+- **Key Benchmarks**:
+  - SWE-bench Verified: Real GitHub issues
+  - Terminal-Bench: Command-line tasks
+- **Why it matters**: Coding is the most powerful action an agent can take - code can manipulate files, call APIs, process data, etc.
+
+### Why Coding Agents Lead
+
+Current state-of-the-art agents are **coding agents**:
+- Claude Code
+- Cursor
+- GitHub Copilot Workspace
+- OpenAI Codex
+
+**Reason**: Code is the most versatile tool. A coding agent can:
+1. Perceive (read files, understand context)
+2. Reason (plan the solution)
+3. Act (write and execute code)
+
+This makes them the closest thing to "general-purpose" agents we have today.
+
+---
+
 Based on your content, here are 3 additional topics to cover:
 
 ---

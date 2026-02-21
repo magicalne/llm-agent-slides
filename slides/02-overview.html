@@ -3,34 +3,161 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slide 2 - What is an LLM Agent</title>
+<title>Slide 2 - The ARC of LLM Agents</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-arc .arc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .arc-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-heading);
+    font-size: 72px;
+    font-weight: 800;
+    letter-spacing: 8px;
+  }
+
+  .arc-title .a { color: var(--accent); }
+  .arc-title .r { color: var(--accent-soft); }
+  .arc-title .c { color: #7DD3FC; }
+
+  .arc-subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+  }
+
+  .arc-cards {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .arc-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 24px 32px;
+    text-align: center;
+    flex: 1;
+    max-width: 240px;
+    transition: all 0.3s ease;
+  }
+
+  .arc-card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-4px);
+  }
+
+  .arc-card .letter {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .arc-card.agentic .letter { color: var(--accent); }
+  .arc-card.reasoning .letter { color: var(--accent-soft); }
+  .arc-card.coding .letter { color: #7DD3FC; }
+
+  .arc-card .label {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .arc-card .desc {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .arc-card .benchmarks {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .why-coding {
+    margin-top: 32px;
+    text-align: center;
+    padding: 16px 24px;
+    background: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 8px;
+  }
+
+  .why-coding p {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .why-coding strong {
+    color: var(--accent);
+    font-weight: 500;
+  }
+</style>
 </head>
 <body>
 
-<div class="slide slide-content">
+<div class="slide slide-content slide-arc">
   <div class="slide-inner">
-    <span class="section-label">Introduction</span>
-    <h2>What is an LLM Agent?</h2>
-    <p class="lead">An LLM agent is an AI system that can perceive its environment, make decisions, and take actions to achieve specific goals — going beyond simple text generation.</p>
-    <div class="cards">
-      <div class="card">
-        <div class="card-number">01</div>
-        <div class="card-title">Perception</div>
-        <div class="card-desc">Understand inputs from users, documents, APIs, or external systems.</div>
+    <span class="section-label">Core Capabilities</span>
+    <h2>The Three Pillars of Modern Agents</h2>
+
+    <div class="arc-container">
+      <div class="arc-title">
+        <span class="a">A</span><span class="r">R</span><span class="c">C</span>
       </div>
-      <div class="card">
-        <div class="card-number">02</div>
-        <div class="card-title">Reasoning</div>
-        <div class="card-desc">Break down complex tasks, plan steps, and make decisions.</div>
+      <div class="arc-subtitle">Agentic · Reasoning · Coding</div>
+
+      <div class="arc-cards">
+        <div class="arc-card agentic">
+          <div class="letter">A</div>
+          <div class="label">Agentic</div>
+          <div class="desc">Interact with tools, APIs, and external systems autonomously</div>
+          <div class="benchmarks">TAU-Bench · BFCL · BrowseComp</div>
+        </div>
+        <div class="arc-card reasoning">
+          <div class="letter">R</div>
+          <div class="label">Reasoning</div>
+          <div class="desc">Think through complex problems, plan multi-step solutions</div>
+          <div class="benchmarks">ARC-AGI · AIME · HLE</div>
+        </div>
+        <div class="arc-card coding">
+          <div class="letter">C</div>
+          <div class="label">Coding</div>
+          <div class="desc">Write, debug, and execute code to solve real problems</div>
+          <div class="benchmarks">SWE-bench · Terminal-Bench</div>
+        </div>
       </div>
-      <div class="card">
-        <div class="card-number">03</div>
-        <div class="card-title">Action</div>
-        <div class="card-desc">Execute tools, call APIs, and interact with the world.</div>
+
+      <div class="why-coding">
+        <p><strong>Why Coding?</strong> The most powerful agents today are coding agents. They can call tools, think through problems, and write code to execute solutions — making them the most capable general-purpose agents we have.</p>
       </div>
     </div>
   </div>
