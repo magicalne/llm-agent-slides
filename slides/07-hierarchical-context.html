@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 7 - Context Window Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-hierarchical {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 56px;
+    height: 100%;
+  }
+
+  .slide-header {
+    margin-bottom: 20px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  .slide-body {
+    display: flex;
+    gap: 32px;
+    flex: 1;
+  }
+
+  /* === QUESTION SECTION === */
+  .question-section {
+    flex: 0 0 240px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .question-box {
+    background: rgba(251, 146, 60, 0.1);
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .question-box .label {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FB923C;
+    margin-bottom: 6px;
+  }
+
+  .question-box .text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .question-box .highlight {
+    color: #FB923C;
+    font-weight: 600;
+  }
+
+  /* Stats comparison */
+  .stats-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .stat-box {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .stat-box .value {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .stat-box.tokens .value { color: #4ADE80; }
+  .stat-box.context .value { color: var(--accent); }
+
+  .stat-box .label {
+    font-family: var(--font-body);
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Answer summary */
+  .answer-summary {
+    background: rgba(74, 222, 128, 0.08);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .answer-summary .label {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #4ADE80;
+    margin-bottom: 6px;
+  }
+
+  .answer-summary .text {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  /* === STRATEGIES SECTION === */
+  .strategies-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Strategy Card */
+  .strategy-card {
+    flex: 1;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .strategy-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .strategy-number {
+    width: 24px;
+    height: 24px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .strategy-card:nth-child(2) .strategy-number {
+    background: #FB923C;
+  }
+
+  .strategy-title {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .strategy-subtitle {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Strategy 1: Task Isolation Diagram */
+  .task-diagram {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .main-context-box {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(168, 85, 247, 0.08));
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    padding: 10px;
+    width: 100px;
+  }
+
+  .main-context-box .label {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .main-context-box .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    background: rgba(168, 85, 247, 0.2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: var(--accent-soft);
+  }
+
+  .arrow-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding-top: 20px;
+  }
+
+  .arrow-col .line {
+    width: 2px;
+    height: 16px;
+    background: rgba(168, 85, 247, 0.3);
+  }
+
+  .arrow-col .text {
+    font-family: var(--font-body);
+    font-size: 8px;
+    color: var(--text-muted);
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .sub-contexts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .sub-context-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sub-context-box .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sub-context-box .name {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .sub-context-box .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    background: rgba(74, 222, 128, 0.15);
+    color: #4ADE80;
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .sub-context-box .work {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  .result-arrow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(74, 222, 128, 0.05);
+    border-radius: 6px;
+  }
+
+  .result-arrow .icon {
+    color: #4ADE80;
+    font-size: 12px;
+  }
+
+  .result-arrow .text {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-primary);
+  }
+
+  .result-arrow .highlight {
+    color: #4ADE80;
+    font-weight: 500;
+  }
+
+  /* Strategy 2: Compact Diagram */
+  .compact-diagram {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+  }
+
+  .context-window {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .context-window .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .context-window .title {
+    font-family: var(--font-heading);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .context-window .usage {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+  }
+
+  .context-window.full .usage { color: #FB923C; }
+  .context-window.compressed .usage { color: #4ADE80; }
+
+  .context-item {
+    font-family: var(--font-body);
+    font-size: 9px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+
+  .context-item.system {
+    background: rgba(168, 85, 247, 0.1);
+    color: var(--accent-soft);
+  }
+
+  .context-item.user {
+    background: rgba(96, 165, 250, 0.1);
+    color: #60A5FA;
+  }
+
+  .context-item.tool {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .context-item.summary {
+    background: rgba(251, 146, 60, 0.15);
+    color: #FB923C;
+    border: 1px dashed rgba(251, 146, 60, 0.3);
+  }
+
+  .compact-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .compact-arrow .icon {
+    font-size: 24px;
+    color: #FB923C;
+  }
+
+  .compact-arrow .label {
+    font-family: var(--font-heading);
+    font-size: 9px;
+    font-weight: 600;
+    color: #FB923C;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Key Insight */
+  .insight-box {
+    margin-top: auto;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05));
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .insight-box .icon {
+    font-size: 16px;
+  }
+
+  .insight-box .text {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .insight-box .highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .insight-box .code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(168, 85, 247, 0.15);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    color: var(--accent-soft);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-hierarchical">
+  <div class="slide-header">
+    <div class="section-label">Deep Dive</div>
+    <h1>Context Window Management</h1>
+    <p class="subtitle">How Claude Code handles 1M+ tokens with 200K context</p>
+  </div>
+
+  <div class="slide-body">
+    <!-- Left: The Question -->
+    <div class="question-section">
+      <div class="question-box">
+        <div class="label">The Puzzle</div>
+        <div class="text">
+          A session can burn <span class="highlight">1M+ tokens</span>, but the LLM only has <span class="highlight">200K context</span>. How?
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box tokens">
+          <div class="value">1M+</div>
+          <div class="label">Tokens Used</div>
+        </div>
+        <div class="stat-box context">
+          <div class="value">200K</div>
+          <div class="label">Context Limit</div>
+        </div>
+      </div>
+
+      <div class="answer-summary">
+        <div class="label">Two Strategies</div>
+        <div class="text">
+          <strong>1. Task isolation</strong> — Sub-agents have their own context<br>
+          <strong>2. Auto-compact</strong> — Summarize when full
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Two Strategies -->
+    <div class="strategies-section">
+      <!-- Strategy 1: Task Isolation -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-number">1</div>
+          <div>
+            <div class="strategy-title">Task Isolation</div>
+            <div class="strategy-subtitle">Proactive — Sub-agents work in separate contexts</div>
+          </div>
+        </div>
+
+        <div class="task-diagram">
+          <div class="main-context-box">
+            <div class="label">Main Agent</div>
+            <div class="badge">200K</div>
+          </div>
+
+          <div class="arrow-col">
+            <div class="line"></div>
+            <div class="text">TASK</div>
+            <div class="line"></div>
+          </div>
+
+          <div class="sub-contexts">
+            <div class="sub-context-box">
+              <div class="header">
+                <span class="name">Explore</span>
+                <span class="badge">200K</span>
+              </div>
+              <span class="work">reads 50 files</span>
+            </div>
+            <div class="sub-context-box">
+              <div class="header">
+                <span class="name">Plan</span>
+                <span class="badge">200K</span>
+              </div>
+              <span class="work">analyzes architecture</span>
+            </div>
+            <div class="sub-context-box">
+              <div class="header">
+                <span class="name">Analyze</span>
+                <span class="badge">200K</span>
+              </div>
+              <span class="work">traces bugs</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-arrow">
+          <span class="icon">↑</span>
+          <span class="text">Sub-agent burns <span class="highlight">100K+</span>, main context grows only <span class="highlight">~100</span> tokens</span>
+        </div>
+      </div>
+
+      <!-- Strategy 2: Auto-Compact -->
+      <div class="strategy-card">
+        <div class="strategy-header">
+          <div class="strategy-number">2</div>
+          <div>
+            <div class="strategy-title">Auto-Compact</div>
+            <div class="strategy-subtitle">Reactive — Summarize old messages when approaching limit</div>
+          </div>
+        </div>
+
+        <div class="compact-diagram">
+          <div class="context-window full">
+            <div class="header">
+              <span class="title">Before</span>
+              <span class="usage">180K / 200K</span>
+            </div>
+            <div class="context-item system">system: "You are Claude..."</div>
+            <div class="context-item user">user: "Fix the auth bug"</div>
+            <div class="context-item tool">tool: Read src/auth.ts (8K)</div>
+            <div class="context-item tool">tool: Grep "validate" (3K)</div>
+            <div class="context-item tool">tool: Read tests (12K)</div>
+            <div class="context-item tool">tool: Bash npm test (5K)</div>
+            <div class="context-item tool">...</div>
+          </div>
+
+          <div class="compact-arrow">
+            <span class="icon">→</span>
+            <span class="label">compact</span>
+          </div>
+
+          <div class="context-window compressed">
+            <div class="header">
+              <span class="title">After</span>
+              <span class="usage">50K / 200K</span>
+            </div>
+            <div class="context-item system">system: "You are Claude..."</div>
+            <div class="context-item summary">summary: "Explored auth module, found bug in validate() at line 42, tried 2 fixes..."</div>
+            <div class="context-item user">current work continues...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <span class="icon">💡</span>
+        <div class="text">
+          <span class="code">Task</span> + <span class="code">Compact</span> = <span class="highlight">Infinite effective context</span>
+          <span style="color: var(--text-muted);"> — Work scales beyond model limits</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
