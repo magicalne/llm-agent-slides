@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 6 - Claude Code: ARC in Action</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-claude-code {
+    display: flex;
+    flex-direction: column;
+    padding: 48px 64px;
+    height: 100%;
+  }
+
+  .slide-header {
+    margin-bottom: 24px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  .slide-body {
+    display: flex;
+    gap: 32px;
+    flex: 1;
+  }
+
+  /* === TOOL HIERARCHY === */
+  .hierarchy-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hierarchy-title {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .hierarchy-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    justify-content: flex-start;
+    padding-top: 16px;
+  }
+
+  .hierarchy-tier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tier-label {
+    font-family: var(--font-body);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  /* Task box - top level */
+  .task-box {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 32px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 0 24px rgba(168, 85, 247, 0.2);
+  }
+
+  .task-box .tool-name {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .task-box .tool-desc {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+
+  /* Connector line */
+  .connector {
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, var(--accent), rgba(168, 85, 247, 0.3));
+  }
+
+  .connector-h {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .connector-h::before,
+  .connector-h::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: rgba(168, 85, 247, 0.3);
+  }
+
+  /* Sub-agent boxes */
+  .sub-agents {
+    display: flex;
+    gap: 12px;
+  }
+
+  .sub-agent-box {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+  }
+
+  .sub-agent-box .name {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-soft);
+  }
+
+  .sub-agent-box .desc {
+    font-family: var(--font-body);
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* Core tools row */
+  .core-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+  }
+
+  .tool-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: var(--text-secondary);
+  }
+
+  .tool-tag.highlight {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: var(--accent-soft);
+  }
+
+  /* === TERMINAL SECTION === */
+  .terminal-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .terminal-title {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  /* Feature Cards */
+  .feature-cards {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .feature-card {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .feature-card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(168, 85, 247, 0.3);
+  }
+
+  .feature-card .icon {
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .feature-card .name {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .feature-card .desc {
+    font-family: var(--font-body);
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* TMux Grid */
+  .tmux-grid {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 4px;
+    flex: 1;
+    min-height: 180px;
+  }
+
+  .tmux-pane {
+    background: rgba(17, 7, 33, 0.9);
+    border-radius: 4px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .tmux-pane::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 4px;
+    right: 6px;
+    font-size: 8px;
+    color: var(--text-muted);
+    background: rgba(255,255,255,0.05);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  .tmux-pane.active {
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+  }
+
+  .tmux-pane .prompt {
+    color: #4ADE80;
+    margin-bottom: 4px;
+  }
+
+  .tmux-pane .cmd {
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+  }
+
+  .tmux-pane .output {
+    color: var(--text-muted);
+    font-size: 8px;
+    line-height: 1.3;
+    opacity: 0.7;
+  }
+
+  .tmux-pane .typing {
+    color: var(--accent);
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  /* Key Insight Box */
+  .insight-box {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.05));
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .insight-box .icon {
+    font-size: 18px;
+  }
+
+  .insight-box .text {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-primary);
+    line-height: 1.5;
+  }
+
+  .insight-box .highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .insight-box .equation {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(168, 85, 247, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--accent-soft);
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-claude-code">
+  <div class="slide-header">
+    <div class="section-label">Tools in Action</div>
+    <h1>Claude Code: ARC in Practice</h1>
+    <p class="subtitle">A real-world agent that embodies all three pillars</p>
+  </div>
+
+  <div class="slide-body">
+    <!-- Left: Tool Hierarchy -->
+    <div class="hierarchy-section">
+      <div class="hierarchy-title">Tool Hierarchy</div>
+      <div class="hierarchy-diagram">
+        <!-- Meta-Agent Level -->
+        <div class="hierarchy-tier">
+          <div class="tier-label">Meta-Agent</div>
+          <div class="task-box">
+            <div class="tool-name">TASK</div>
+            <div class="tool-desc">Spawns specialized sub-agents</div>
+          </div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Sub-agents -->
+        <div class="connector-h">
+          <div class="sub-agents">
+            <div class="sub-agent-box">
+              <div class="name">Explore</div>
+              <div class="desc">Code search</div>
+            </div>
+            <div class="sub-agent-box">
+              <div class="name">Plan</div>
+              <div class="desc">Architecture</div>
+            </div>
+            <div class="sub-agent-box">
+              <div class="name">Analyze</div>
+              <div class="desc">Debugging</div>
+            </div>
+            <div class="sub-agent-box">
+              <div class="name">Review</div>
+              <div class="desc">Quality</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector"></div>
+
+        <!-- Core Tools -->
+        <div class="hierarchy-tier" style="width: 100%;">
+          <div class="tier-label">Core Agent Tools</div>
+          <div class="core-tools">
+            <span class="tool-tag highlight">Bash</span>
+            <span class="tool-tag">Read</span>
+            <span class="tool-tag">Edit</span>
+            <span class="tool-tag">Write</span>
+            <span class="tool-tag">WebSearch</span>
+            <span class="tool-tag highlight">MCP</span>
+          </div>
+        </div>
+
+        <!-- Support Tools -->
+        <div class="hierarchy-tier" style="width: 100%; margin-top: 8px;">
+          <div class="tier-label">Support</div>
+          <div class="core-tools" style="background: transparent; padding: 0;">
+            <span class="tool-tag">Glob</span>
+            <span class="tool-tag">Grep</span>
+            <span class="tool-tag">LSP</span>
+            <span class="tool-tag">AskUser</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Why Terminal-First -->
+    <div class="terminal-section">
+      <div class="terminal-title">Why Terminal-First?</div>
+
+      <!-- Feature Cards -->
+      <div class="feature-cards">
+        <div class="feature-card">
+          <div class="icon">⚡</div>
+          <div class="name">Parallel</div>
+          <div class="desc">TMux + Worktrees<br>Multiple instances</div>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔒</div>
+          <div class="name">Control</div>
+          <div class="desc">Bash + Permissions<br>Safe execution</div>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔄</div>
+          <div class="name">Flexible</div>
+          <div class="desc">Multi-model<br>Easy switching</div>
+        </div>
+      </div>
+
+      <!-- TMux Grid Visualization -->
+      <div class="tmux-grid">
+        <div class="tmux-pane active" data-label="api-service">
+          <div class="prompt">~/api-service main</div>
+          <div class="cmd">$ claude</div>
+          <div class="output">Adding auth middleware...</div>
+          <div class="typing">█</div>
+        </div>
+        <div class="tmux-pane" data-label="web-app">
+          <div class="prompt">~/web-app feature</div>
+          <div class="cmd">$ claude</div>
+          <div class="output">Refactoring components...</div>
+        </div>
+        <div class="tmux-pane" data-label="cli-tool">
+          <div class="prompt">~/cli-tool hotfix</div>
+          <div class="cmd">$ claude --model sonnet</div>
+          <div class="output">Fixing edge case...</div>
+        </div>
+        <div class="tmux-pane" data-label="docs">
+          <div class="prompt">~/docs gh-pages</div>
+          <div class="cmd">$ claude</div>
+          <div class="output">Updating README...</div>
+        </div>
+      </div>
+
+      <div class="insight-box">
+        <span class="icon">💡</span>
+        <div class="text">
+          <span class="equation">Terminal-native</span> = <span class="highlight">Parallelizable workflows</span>
+          <br>
+          <span style="color: var(--text-muted); font-size: 11px;">IDE plugins can't do this — true multiplexing</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
