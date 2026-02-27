@@ -243,14 +243,6 @@
     </div>
     <div class="timeline-events">
       <div class="timeline-event" data-step="0">
-        <div class="event-year">2022</div>
-        <div class="event-dot"></div>
-        <div class="event-content">
-          <div class="event-title">ReAct Paper</div>
-          <div class="event-label">Reasoning + Acting</div>
-        </div>
-      </div>
-      <div class="timeline-event" data-step="1">
         <div class="event-year">Jun 2023</div>
         <div class="event-dot"></div>
         <div class="event-content">
@@ -258,41 +250,73 @@
           <div class="event-label">OpenAI API</div>
         </div>
       </div>
-      <div class="timeline-event" data-step="2">
-        <div class="event-year">Mar 2024</div>
+      <div class="timeline-event" data-step="1">
+        <div class="event-year">Sep 2024</div>
         <div class="event-dot"></div>
         <div class="event-content">
-          <div class="event-title">Agentic AI</div>
-          <div class="event-label">Andrew Ng's Talk</div>
+          <div class="event-title">OpenAI o1</div>
+          <div class="event-label">Reasoning Models</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="2">
+        <div class="event-year">Jan 2025</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">DeepSeek R1</div>
+          <div class="event-label">Open Source Reasoning</div>
         </div>
       </div>
       <div class="timeline-event" data-step="3">
-        <div class="event-year">2024</div>
+        <div class="event-year">Feb 2025</div>
         <div class="event-dot"></div>
         <div class="event-content">
-          <div class="event-title">Claude 3.5</div>
-          <div class="event-label">Tool Calling Focus</div>
+          <div class="event-title">Deep Research</div>
+          <div class="event-label">OpenAI Agent</div>
         </div>
       </div>
       <div class="timeline-event" data-step="4">
-        <div class="event-year">2025</div>
+        <div class="event-year">Feb 2025</div>
         <div class="event-dot"></div>
         <div class="event-content">
-          <div class="event-title">Agent Era</div>
-          <div class="event-label">Claude Code & Beyond</div>
+          <div class="event-title">Claude Code</div>
+          <div class="event-label">Coding Agent</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="5">
+        <div class="event-year">Mar 2025</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Manus</div>
+          <div class="event-label">First General Agent</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="6">
+        <div class="event-year">May 2025</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Interleaved Thinking</div>
+          <div class="event-label">Claude 4 Sonnet</div>
+        </div>
+      </div>
+      <div class="timeline-event" data-step="7">
+        <div class="event-year">Dec 2025</div>
+        <div class="event-dot"></div>
+        <div class="event-content">
+          <div class="event-title">Agentic Coding Era</div>
+          <div class="event-label">Programming Solved</div>
         </div>
       </div>
     </div>
   </div>
 
   <div class="detail-box" id="detailBox">
-    <div class="detail-year" id="detailYear">2022</div>
-    <div class="detail-title" id="detailTitle">ReAct Paper</div>
-    <div class="detail-desc" id="detailDesc">Princeton and Google Research introduced the ReAct framework, combining Chain-of-Thought reasoning with action execution. The Thought → Action → Observation pattern became the foundation for modern agent architectures.</div>
+    <div class="detail-year" id="detailYear">June 2023</div>
+    <div class="detail-title" id="detailTitle">OpenAI Function Calling</div>
+    <div class="detail-desc" id="detailDesc">OpenAI introduced native function calling in their API, allowing LLMs to call external tools for the first time. This was a major milestone — LLMs could now ACT, not just generate text.</div>
   </div>
 
   <div class="step-indicator">
-    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">5</span>
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">8</span>
   </div>
 </div>
 
@@ -300,34 +324,49 @@
 // Event details
 const eventDetails = [
   {
-    year: '2022',
-    title: 'ReAct Paper',
-    desc: 'Princeton and Google Research introduced the ReAct framework, combining Chain-of-Thought reasoning with action execution. The Thought → Action → Observation pattern became the foundation for modern agent architectures.'
-  },
-  {
     year: 'June 2023',
     title: 'OpenAI Function Calling',
     desc: 'OpenAI introduced native function calling in their API, allowing LLMs to call external tools for the first time. This was a major milestone — LLMs could now ACT, not just generate text.'
   },
   {
-    year: 'March 2024',
-    title: 'Agentic AI Goes Mainstream',
-    desc: 'Andrew Ng\'s Snowflake Summit talk highlighted that agentic workflows can make smaller models outperform larger ones. GPT-3.5 with agentic workflow beat GPT-4 zero-shot on coding benchmarks.'
+    year: 'September 2024',
+    title: 'OpenAI o1',
+    desc: 'OpenAI released o1-preview and o1-mini, introducing reasoning models that "think before they respond." These models achieved 83% on IMO problems vs GPT-4o\'s 13%, marking a breakthrough in AI reasoning capabilities.'
   },
   {
-    year: '2024',
-    title: 'Claude 3.5 Sonnet',
-    desc: 'Anthropic released Claude 3.5 Sonnet with a focus on coding and agent tasks. Post-training and RL specifically for tool calling dramatically improved precision and reliability.'
+    year: 'January 2025',
+    title: 'DeepSeek R1',
+    desc: 'DeepSeek released R1 as open-source, matching o1\'s performance at a fraction of the cost. Training cost under $6M vs billions for competitors. Reached 15M daily users in 18 days — described as AI\'s "Sputnik Moment."'
   },
   {
-    year: '2025',
-    title: 'The Agent Era Begins',
-    desc: 'Claude Code, OpenAI Operator, and other production agents emerge. Programmatic Tool Calling (PTC) solves context pollution. Agents are now ready for real-world applications.'
+    year: 'February 2025',
+    title: 'OpenAI Deep Research',
+    desc: 'OpenAI launched Deep Research powered by o3, an agent capable of autonomous multi-step research. It can browse the web, analyze information, and produce comprehensive reports in 5-30 minutes.'
+  },
+  {
+    year: 'February 2025',
+    title: 'Claude Code',
+    desc: 'Anthropic released Claude Code, a command-line coding agent that can write, execute, and iterate on code. Released with Claude 3.7 Sonnet, it represents a new paradigm of AI-assisted development with direct file system access.'
+  },
+  {
+    year: 'March 2025',
+    title: 'Manus',
+    desc: 'Monica.im released Manus, the world\'s first general-purpose AI agent. Unlike chatbots that provide answers, Manus delivers complete task results — it works asynchronously in the cloud and delivers finished products. Achieved SOTA on GAIA benchmark.'
+  },
+  {
+    year: 'May 2025',
+    title: 'Claude Interleaved Thinking',
+    desc: 'Anthropic introduced Interleaved Thinking with Claude 4 Sonnet. Unlike "think first, then do" approaches, this enables real-time "think while doing" — interleaving reasoning with actions for more dynamic agent behavior.'
+  },
+  {
+    year: 'December 2025',
+    title: 'Agentic Coding Era',
+    desc: 'The watershed moment arrived. Coding flipped from 80% manual to 80% agent-driven. Developers became orchestrators, natural language became the hottest programming language. The future isn\'t AI assisting humans — it\'s humans directing AI agents to build.'
   }
 ];
 
 let currentStep = 0;
-const totalSteps = 5;
+const totalSteps = 8;
 
 // DOM elements
 const events = document.querySelectorAll('.timeline-event');
