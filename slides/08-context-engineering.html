@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 8 - Context Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-context-eng {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 56px;
+    height: 100%;
+  }
+
+  .slide-header {
+    margin-bottom: 24px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-body {
+    display: flex;
+    gap: 32px;
+    flex: 1;
+  }
+
+  /* === MESSAGE PANEL === */
+  .message-panel {
+    flex: 0 0 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .message-block {
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+  }
+
+  .message-block.system {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .message-block.user {
+    background: rgba(96, 165, 250, 0.1);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+  }
+
+  .message-block.assistant {
+    background: rgba(74, 222, 128, 0.1);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+  }
+
+  .message-block .role-tag {
+    font-family: var(--font-heading);
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .message-block.system .role-tag { color: var(--accent); }
+  .message-block.user .role-tag { color: #60A5FA; }
+  .message-block.assistant .role-tag { color: #4ADE80; }
+
+  .message-block .tokens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .token {
+    padding: 3px 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.05);
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+
+  .token.dynamic {
+    background: rgba(251, 146, 60, 0.2);
+    color: #FB923C;
+  }
+
+  .token.cached {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ADE80;
+  }
+
+  .token.encoding {
+    background: rgba(251, 146, 60, 0.4);
+    color: #FB923C;
+    animation: encodePulse 0.4s ease-out;
+  }
+
+  @keyframes encodePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 8px rgba(251, 146, 60, 0.5); }
+    100% { transform: scale(1); }
+  }
+
+  /* === CACHE VISUALIZATION === */
+  .cache-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .cache-layer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .layer-label {
+    width: 100px;
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .layer-content {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 100px;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-content: flex-start;
+  }
+
+  .layer-content.vram {
+    background: rgba(168, 85, 247, 0.05);
+    border-color: rgba(168, 85, 247, 0.2);
+  }
+
+  .layer-content.disk {
+    background: rgba(96, 165, 250, 0.05);
+    border-color: rgba(96, 165, 250, 0.2);
+  }
+
+  .kv-block {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s ease;
+  }
+
+  .kv-block.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .kv-block.system-kv {
+    background: rgba(168, 85, 247, 0.3);
+    color: var(--accent-soft);
+  }
+
+  .kv-block.user-kv {
+    background: rgba(96, 165, 250, 0.3);
+    color: #60A5FA;
+  }
+
+  .kv-block.assistant-kv {
+    background: rgba(74, 222, 128, 0.3);
+    color: #4ADE80;
+  }
+
+  .kv-block.invalid {
+    background: rgba(251, 146, 60, 0.3);
+    color: #FB923C;
+    animation: invalidPulse 0.5s ease-out;
+  }
+
+  @keyframes invalidPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+  }
+
+  /* Flow arrow */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--text-muted);
+    padding: 8px 0;
+  }
+
+  /* === STATUS DISPLAY === */
+  .status-panel {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: auto;
+  }
+
+  .status-header {
+    font-family: var(--font-heading);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .status-message {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .status-message .highlight-bad {
+    color: #FB923C;
+    font-weight: 500;
+  }
+
+  .status-message .highlight-good {
+    color: #4ADE80;
+    font-weight: 500;
+  }
+
+  .status-message .code {
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  /* === STEP INDICATOR === */
+  .step-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Labels */
+  .cache-label {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-family: var(--font-body);
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-context-eng">
+  <div class="slide-header">
+    <div class="section-label">For Engineers</div>
+    <h1>Prefix Caching: One Change Invalidates Everything</h1>
+  </div>
+
+  <div class="slide-body">
+    <!-- Left: Messages -->
+    <div class="message-panel">
+      <div class="message-block system">
+        <div class="role-tag">system</div>
+        <div class="tokens" id="systemTokens">
+          <span class="token">You</span>
+          <span class="token">are</span>
+          <span class="token">a</span>
+          <span class="token">helpful</span>
+          <span class="token">assistant.</span>
+          <span class="token dynamic" id="timeToken">Time:</span>
+          <span class="token dynamic" id="timeValue">14:32:05</span>
+        </div>
+      </div>
+      <div class="message-block user">
+        <div class="role-tag">user</div>
+        <div class="tokens" id="userTokens1">
+          <span class="token">What's</span>
+          <span class="token">the</span>
+          <span class="token">weather?</span>
+        </div>
+      </div>
+      <div class="message-block assistant">
+        <div class="role-tag">assistant</div>
+        <div class="tokens" id="assistantTokens1">
+          <span class="token">Let</span>
+          <span class="token">me</span>
+          <span class="token">check...</span>
+        </div>
+      </div>
+      <div class="message-block user">
+        <div class="role-tag">user</div>
+        <div class="tokens" id="userTokens2">
+          <span class="token">Book</span>
+          <span class="token">a</span>
+          <span class="token">flight.</span>
+        </div>
+      </div>
+      <div class="message-block assistant">
+        <div class="role-tag">assistant</div>
+        <div class="tokens" id="assistantTokens2">
+          <span class="token">Searching</span>
+          <span class="token">flights...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Cache Visualization -->
+    <div class="cache-panel">
+      <div class="cache-layer">
+        <div class="layer-label">GPU VRAM</div>
+        <div class="layer-content vram" id="vramLayer">
+          <span class="cache-label">KV Cache</span>
+        </div>
+      </div>
+
+      <div class="flow-arrow">↓</div>
+
+      <div class="cache-layer">
+        <div class="layer-label">Disk</div>
+        <div class="layer-content disk" id="diskLayer">
+          <span class="cache-label">Persistent Cache</span>
+        </div>
+      </div>
+
+      <div class="status-panel">
+        <div class="status-header" id="statusHeader">Status</div>
+        <div class="status-message" id="statusMessage">
+          Waiting...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">5</span>
+  </div>
+</div>
+
+<script>
+const totalSteps = 5;
+let currentStep = 0;
+
+const vramLayer = document.getElementById('vramLayer');
+const diskLayer = document.getElementById('diskLayer');
+const statusHeader = document.getElementById('statusHeader');
+const statusMessage = document.getElementById('statusMessage');
+const timeValue = document.getElementById('timeValue');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+// All tokens by role
+const allTokens = {
+  system: ['You', 'are', 'a', 'helpful', 'assistant.', 'Time:', '14:32:05'],
+  user1: ['What\'s', 'the', 'weather?'],
+  assistant1: ['Let', 'me', 'check...'],
+  user2: ['Book', 'a', 'flight.'],
+  assistant2: ['Searching', 'flights...']
+};
+
+stepTotal.textContent = totalSteps;
+
+// KV blocks in VRAM
+let vramBlocks = [];
+let diskBlocks = [];
+
+function clearBlocks() {
+  vramBlocks.forEach(b => b.remove());
+  diskBlocks.forEach(b => b.remove());
+  vramBlocks = [];
+  diskBlocks = [];
+}
+
+function createKVBlock(layer, type, text) {
+  const block = document.createElement('div');
+  block.className = `kv-block ${type}-kv`;
+  block.textContent = text;
+  layer.appendChild(block);
+  return block;
+}
+
+function animateBlocks(blocks, delay = 120) {
+  blocks.forEach((block, i) => {
+    setTimeout(() => {
+      block.classList.add('visible');
+    }, i * delay);
+  });
+}
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset
+  clearBlocks();
+  timeValue.textContent = '14:32:05';
+  timeValue.classList.remove('encoding');
+
+  // Reset all token styles
+  document.querySelectorAll('.token').forEach(t => {
+    t.classList.remove('cached', 'encoding');
+  });
+
+  if (step === 0) {
+    // Step 1: Initial prefill - all tokens cached
+    statusHeader.textContent = 'Request 1';
+    statusMessage.innerHTML = 'Processing request... All tokens are being <span class="code">prefilled</span> and cached.';
+
+    // Create KV blocks for all messages
+    allTokens.system.forEach(t => {
+      vramBlocks.push(createKVBlock(vramLayer, 'system', t));
+    });
+    allTokens.user1.forEach(t => {
+      vramBlocks.push(createKVBlock(vramLayer, 'user', t));
+    });
+    allTokens.assistant1.forEach(t => {
+      vramBlocks.push(createKVBlock(vramLayer, 'assistant', t));
+    });
+    allTokens.user2.forEach(t => {
+      vramBlocks.push(createKVBlock(vramLayer, 'user', t));
+    });
+    allTokens.assistant2.forEach(t => {
+      vramBlocks.push(createKVBlock(vramLayer, 'assistant', t));
+    });
+
+    animateBlocks(vramBlocks, 100);
+
+    setTimeout(() => {
+      statusMessage.innerHTML = 'KV Cache built! All <span class="highlight-good">50+ tokens</span> are now cached in VRAM.';
+    }, 5000);
+  }
+
+  if (step === 1) {
+    // Step 2: Show cache is saved to disk
+    statusHeader.textContent = 'Cache Saved';
+    statusMessage.innerHTML = 'KV Cache is also persisted to disk for reuse across sessions.';
+
+    // Show blocks in VRAM
+    allTokens.system.forEach(t => {
+      const b = createKVBlock(vramLayer, 'system', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+    allTokens.user1.forEach(t => {
+      const b = createKVBlock(vramLayer, 'user', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+    allTokens.assistant1.forEach(t => {
+      const b = createKVBlock(vramLayer, 'assistant', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+    allTokens.user2.forEach(t => {
+      const b = createKVBlock(vramLayer, 'user', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+    allTokens.assistant2.forEach(t => {
+      const b = createKVBlock(vramLayer, 'assistant', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+
+    // Animate to disk
+    setTimeout(() => {
+      vramBlocks.forEach((b, i) => {
+        setTimeout(() => {
+          const diskBlock = createKVBlock(diskLayer, b.classList.contains('system-kv') ? 'system' :
+                                           b.classList.contains('user-kv') ? 'user' : 'assistant', b.textContent);
+          diskBlock.classList.add('visible');
+          diskBlocks.push(diskBlock);
+        }, i * 80);
+      });
+    }, 500);
+
+    setTimeout(() => {
+      statusMessage.innerHTML = 'Cache persisted! Next request can reuse <span class="highlight-good">all cached tokens</span>.';
+    }, 6000);
+  }
+
+  if (step === 2) {
+    // Step 3: New request comes in with changed timestamp
+    statusHeader.textContent = 'Request 2';
+    statusMessage.innerHTML = 'New request arrives... but the <span class="highlight-bad">timestamp changed!</span>';
+
+    // Show cached state
+    allTokens.system.forEach(t => {
+      const b = createKVBlock(vramLayer, 'system', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+    [...allTokens.user1, ...allTokens.assistant1, ...allTokens.user2, ...allTokens.assistant2].forEach(t => {
+      const b = createKVBlock(vramLayer, 'user', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+
+    // Highlight timestamp change
+    setTimeout(() => {
+      timeValue.textContent = '14:32:06';
+      timeValue.classList.add('encoding');
+
+      // Mark system blocks as invalid
+      vramBlocks.forEach(b => {
+        if (b.classList.contains('system-kv')) {
+          b.classList.add('invalid');
+        }
+      });
+
+      statusMessage.innerHTML = 'Timestamp in system prompt changed from <span class="code">14:32:05</span> to <span class="code">14:32:06</span>';
+    }, 1000);
+  }
+
+  if (step === 3) {
+    // Step 4: Cache invalidation cascades
+    statusHeader.textContent = 'Cache Miss!';
+    statusMessage.innerHTML = 'Prefix cache <span class="highlight-bad">INVALIDATED</span>! All downstream messages must be re-processed.';
+
+    // Show all blocks as invalid
+    allTokens.system.forEach(t => {
+      const b = createKVBlock(vramLayer, 'system', t);
+      b.classList.add('visible', 'invalid');
+      vramBlocks.push(b);
+    });
+    [...allTokens.user1, ...allTokens.assistant1, ...allTokens.user2, ...allTokens.assistant2].forEach(t => {
+      const b = createKVBlock(vramLayer, 'user', t);
+      b.classList.add('visible', 'invalid');
+      vramBlocks.push(b);
+    });
+
+    // Mark all tokens as encoding
+    document.querySelectorAll('.token').forEach(t => {
+      t.classList.add('encoding');
+    });
+
+    setTimeout(() => {
+      statusMessage.innerHTML = 'Even though <span class="highlight-bad">user/assistant messages didn\'t change</span>, they ALL must be re-prefilled because the prefix changed!';
+    }, 2000);
+  }
+
+  if (step === 4) {
+    // Step 5: Solution
+    statusHeader.textContent = 'Solution';
+    statusMessage.innerHTML = 'Move dynamic data <span class="highlight-good">after</span> the static prefix to preserve cache hits.';
+
+    // Show solution: static prefix cached, dynamic suffix small
+    const staticSystem = ['You', 'are', 'a', 'helpful', 'assistant.'];
+    const dynamicPart = ['Time:', '14:32:06'];
+
+    staticSystem.forEach(t => {
+      const b = createKVBlock(vramLayer, 'system', t);
+      b.classList.add('visible');
+      vramBlocks.push(b);
+    });
+
+    setTimeout(() => {
+      [...allTokens.user1, ...allTokens.assistant1, ...allTokens.user2, ...allTokens.assistant2].forEach(t => {
+        const b = createKVBlock(vramLayer, 'user', t);
+        b.classList.add('visible');
+        vramBlocks.push(b);
+      });
+    }, 600);
+
+    setTimeout(() => {
+      dynamicPart.forEach(t => {
+        const b = createKVBlock(vramLayer, 'system', t);
+        b.classList.add('visible', 'invalid');
+        vramBlocks.push(b);
+      });
+    }, 1500);
+
+    setTimeout(() => {
+      statusMessage.innerHTML = 'Static prefix <span class="highlight-good">CACHE HIT</span> → Only dynamic suffix needs prefill. <span class="highlight-good">80%+ tokens saved!</span>';
+    }, 2500);
+  }
+
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
