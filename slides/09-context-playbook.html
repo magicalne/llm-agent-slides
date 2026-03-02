@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 9 - Context Engineering Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-playbook {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 56px;
+    height: 100%;
+  }
+
+  .slide-header {
+    margin-bottom: 24px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  .strategies-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  .strategy-row {
+    display: flex;
+    align-items: stretch;
+    gap: 16px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.4s ease;
+  }
+
+  .strategy-row.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .strategy-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .strategy-row:nth-child(1) .strategy-number {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+  }
+
+  .strategy-row:nth-child(2) .strategy-number {
+    background: rgba(96, 165, 250, 0.2);
+    color: #60A5FA;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+  }
+
+  .strategy-row:nth-child(3) .strategy-number {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--accent);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .strategy-row:nth-child(4) .strategy-number {
+    background: rgba(251, 191, 36, 0.2);
+    color: #FBBF24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .strategy-row:nth-child(5) .strategy-number {
+    background: rgba(251, 146, 60, 0.2);
+    color: #FB923C;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+  }
+
+  .strategy-content {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .strategy-row.warning .strategy-content {
+    background: rgba(251, 146, 60, 0.05);
+    border-color: rgba(251, 146, 60, 0.2);
+  }
+
+  .strategy-main {
+    flex: 1;
+  }
+
+  .strategy-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .strategy-desc {
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .strategy-impl {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .impl-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+
+  .impl-tag.highlight {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: var(--accent-soft);
+  }
+
+  .strategy-arrow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 140px;
+  }
+
+  .strategy-arrow .arrow {
+    color: var(--text-muted);
+  }
+
+  .strategy-arrow .result {
+    color: #4ADE80;
+    font-weight: 500;
+  }
+
+  .strategy-row.warning .strategy-arrow .result {
+    color: #FB923C;
+  }
+
+  /* Warning badge */
+  .warning-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-body);
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(251, 146, 60, 0.2);
+    color: #FB923C;
+    margin-left: 8px;
+  }
+
+  /* Footer quote */
+  .footer-quote {
+    margin-top: auto;
+    padding: 16px 24px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s ease;
+  }
+
+  .footer-quote.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .quote-icon {
+    font-size: 24px;
+    opacity: 0.6;
+  }
+
+  .quote-text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .quote-text .highlight {
+    color: var(--accent);
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  /* Step indicator */
+  .step-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-playbook">
+  <div class="slide-header">
+    <div class="section-label">For Engineers</div>
+    <h1>Context Engineering Playbook</h1>
+    <p class="subtitle">The Art of Fitting Infinity into 200K Tokens</p>
+  </div>
+
+  <div class="strategies-grid">
+    <div class="strategy-row" id="strategy1">
+      <div class="strategy-number">1</div>
+      <div class="strategy-content">
+        <div class="strategy-main">
+          <div class="strategy-title">Static Prefix</div>
+          <div class="strategy-desc">Keep system prompt stable. Move dynamic data to the end.</div>
+        </div>
+        <div class="strategy-impl">
+          <span class="impl-tag highlight">cache-friendly</span>
+        </div>
+        <div class="strategy-arrow">
+          <span class="arrow">→</span>
+          <span class="result">80%+ cache hit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-row" id="strategy2">
+      <div class="strategy-number">2</div>
+      <div class="strategy-content">
+        <div class="strategy-main">
+          <div class="strategy-title">External Memory</div>
+          <div class="strategy-desc">Store long-term data outside context. Let agent read/write as needed.</div>
+        </div>
+        <div class="strategy-impl">
+          <span class="impl-tag">SQLite</span>
+          <span class="impl-tag">Vector DB</span>
+          <span class="impl-tag">Files</span>
+        </div>
+        <div class="strategy-arrow">
+          <span class="arrow">→</span>
+          <span class="result">Unlimited memory</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-row" id="strategy3">
+      <div class="strategy-number">3</div>
+      <div class="strategy-content">
+        <div class="strategy-main">
+          <div class="strategy-title">Spawn Sub-agents</div>
+          <div class="strategy-desc">Each sub-agent gets its own fresh 200K context. Main context stays clean.</div>
+        </div>
+        <div class="strategy-impl">
+          <span class="impl-tag highlight">Task tool</span>
+          <span class="impl-tag">isolation</span>
+        </div>
+        <div class="strategy-arrow">
+          <span class="arrow">→</span>
+          <span class="result">Parallel work</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-row" id="strategy4">
+      <div class="strategy-number">4</div>
+      <div class="strategy-content">
+        <div class="strategy-main">
+          <div class="strategy-title">Curate Context</div>
+          <div class="strategy-desc">Only include what's relevant. Filter, rank, and select — don't dump everything.</div>
+        </div>
+        <div class="strategy-impl">
+          <span class="impl-tag">RAG</span>
+          <span class="impl-tag">filtering</span>
+          <span class="impl-tag">relevance</span>
+        </div>
+        <div class="strategy-arrow">
+          <span class="arrow">→</span>
+          <span class="result">Focused context</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-row warning" id="strategy5">
+      <div class="strategy-number">5</div>
+      <div class="strategy-content">
+        <div class="strategy-main">
+          <div class="strategy-title">
+            Compress
+            <span class="warning-badge">⚠️ LAST RESORT</span>
+          </div>
+          <div class="strategy-desc">Summarize old messages. Warning: loses details — critical for debugging!</div>
+        </div>
+        <div class="strategy-impl">
+          <span class="impl-tag">summarize</span>
+          <span class="impl-tag">auto-compact</span>
+        </div>
+        <div class="strategy-arrow">
+          <span class="arrow">→</span>
+          <span class="result">Info loss ⚠️</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-quote" id="footerQuote">
+    <span class="quote-icon">💡</span>
+    <div class="quote-text">
+      Typical task: <span class="highlight">~50 tool calls</span>. Production agent: <span class="highlight">hundreds of turns</span>.<br>
+      Context rot is real — model performance degrades as context grows. These strategies keep your agent sharp.
+    </div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">2</span>
+  </div>
+</div>
+
+<script>
+const totalSteps = 2;
+let currentStep = 0;
+
+const strategies = [
+  document.getElementById('strategy1'),
+  document.getElementById('strategy2'),
+  document.getElementById('strategy3'),
+  document.getElementById('strategy4'),
+  document.getElementById('strategy5')
+];
+const footerQuote = document.getElementById('footerQuote');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+stepTotal.textContent = totalSteps;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset
+  strategies.forEach(s => s.classList.remove('visible'));
+  footerQuote.classList.remove('visible');
+
+  if (step === 0) {
+    // Step 1: Show strategies one by one
+    strategies.forEach((s, i) => {
+      setTimeout(() => {
+        s.classList.add('visible');
+      }, i * 200);
+    });
+  }
+
+  if (step === 1) {
+    // Step 2: Show all + footer quote
+    strategies.forEach(s => s.classList.add('visible'));
+    setTimeout(() => {
+      footerQuote.classList.add('visible');
+    }, 300);
+  }
+
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
