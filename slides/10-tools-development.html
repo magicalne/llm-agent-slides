@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 10 - Tools Development</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-tools {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 56px;
+    height: 100%;
+  }
+
+  .slide-header {
+    margin-bottom: 24px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .slide-body {
+    display: flex;
+    gap: 32px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  /* === LEFT: TOOL DEFINITION === */
+  .tool-definition {
+    flex: 0 0 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .def-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .code-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    overflow: auto;
+    flex: 1;
+    white-space: pre-wrap;
+  }
+
+  .code-block .key { color: #60A5FA; }
+  .code-block .string { color: #4ADE80; }
+  .code-block .highlight {
+    background: rgba(168, 85, 247, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--accent-soft);
+  }
+
+  .insight-box {
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 8px;
+    padding: 12px 16px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+  }
+
+  .insight-box.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .insight-box .insight-icon {
+    font-size: 14px;
+    margin-right: 8px;
+  }
+
+  .insight-box .insight-text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--accent-soft);
+  }
+
+  /* === RIGHT: FLOW DIAGRAM === */
+  .flow-diagram {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.4s ease;
+  }
+
+  .flow-step.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .flow-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .flow-step:nth-child(1) .flow-number {
+    background: rgba(96, 165, 250, 0.2);
+    color: #60A5FA;
+    border: 1px solid rgba(96, 165, 250, 0.3);
+  }
+
+  .flow-step:nth-child(2) .flow-number {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--accent);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .flow-step:nth-child(3) .flow-number {
+    background: rgba(74, 222, 128, 0.2);
+    color: #4ADE80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+  }
+
+  .flow-step:nth-child(4) .flow-number {
+    background: rgba(251, 191, 36, 0.2);
+    color: #FBBF24;
+    border: 1px solid rgba(251, 191, 36, 0.3);
+  }
+
+  .flow-content {
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .flow-title {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .flow-detail {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: rgba(0,0,0,0.3);
+    padding: 8px 12px;
+    border-radius: 6px;
+    line-height: 1.6;
+  }
+
+  .flow-detail .match {
+    color: #4ADE80;
+    font-weight: 500;
+  }
+
+  .flow-detail .nomatch {
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  .flow-detail .extract {
+    color: #60A5FA;
+    font-weight: 500;
+  }
+
+  .flow-detail .result {
+    color: #FBBF24;
+  }
+
+  /* Arrow between steps */
+  .flow-arrow {
+    display: flex;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--text-muted);
+    padding: 4px 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .flow-arrow.visible {
+    opacity: 1;
+  }
+
+  /* Step indicator */
+  .step-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 28px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-tools">
+  <div class="slide-header">
+    <div class="section-label">For Engineers</div>
+    <h1>Tool Calling: How LLMs Choose & Execute</h1>
+  </div>
+
+  <div class="slide-body">
+    <!-- Left: Tool Definition -->
+    <div class="tool-definition">
+      <div class="def-label">Tool Definition (JSON Schema)</div>
+      <div class="code-block" id="codeBlock">{
+  <span class="key">"name"</span>: <span class="string">"get_weather"</span>,
+  <span class="key">"description"</span>: <span class="string" id="descField">"Get current weather for a city"</span>,
+
+  <span class="key">"parameters"</span>: {
+&nbsp;&nbsp;<span class="key">"type"</span>: <span class="string">"object"</span>,
+&nbsp;&nbsp;<span class="key">"properties"</span>: {
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"city"</span>: {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"type"</span>: <span class="string">"string"</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"description"</span>: <span class="string">"City name"</span>
+&nbsp;&nbsp;&nbsp;&nbsp;},
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"unit"</span>: {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"type"</span>: <span class="string">"string"</span>,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"enum"</span>: [<span class="string">"celsius"</span>, <span class="string">"fahrenheit"</span>]
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;},
+&nbsp;&nbsp;<span class="key">"required"</span>: [<span class="string">"city"</span>]
+&nbsp;}
+}</span>
+      </div>
+      <div class="insight-box" id="insightBox">
+        <span class="insight-icon">💡</span>
+        <span class="insight-text">The <code>description</code> field is how the LLM knows when to use this tool!</span>
+      </div>
+    </div>
+
+    <!-- Right: Flow Diagram -->
+    <div class="flow-diagram">
+      <div class="def-label">Inference Flow</div>
+
+      <!-- Step 1: User Message -->
+      <div class="flow-step" id="flow1">
+        <div class="flow-number">1</div>
+        <div class="flow-content">
+          <div class="flow-title">User Message</div>
+          <div class="flow-detail">"What's the weather in Tokyo?"</div>
+        </div>
+      </div>
+
+      <div class="flow-arrow" id="arrow1">↓</div>
+
+      <!-- Step 2: Tool Selection -->
+      <div class="flow-step" id="flow2">
+        <div class="flow-number">2</div>
+        <div class="flow-content">
+          <div class="flow-title">LLM Matches Tools</div>
+          <div class="flow-detail">
+<span class="match">✓ get_weather</span> ← "weather" matches description
+<span class="nomatch">✗ send_email</span>
+<span class="nomatch">✗ read_file</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow" id="arrow2">↓</div>
+
+      <!-- Step 3: Structured Output -->
+      <div class="flow-step" id="flow3">
+        <div class="flow-number">3</div>
+        <div class="flow-content">
+          <div class="flow-title">LLM Outputs Function Call</div>
+          <div class="flow-detail">
+{
+  <span class="extract">"name"</span>: <span class="extract">"get_weather"</span>,
+  <span class="extract">"arguments"</span>: { <span class="extract">"city"</span>: <span class="extract">"Tokyo"</span> }
+}
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow" id="arrow3">↓</div>
+
+      <!-- Step 4: Execution & Response -->
+      <div class="flow-step" id="flow4">
+        <div class="flow-number">4</div>
+        <div class="flow-content">
+          <div class="flow-title">Execute & Respond</div>
+          <div class="flow-detail">
+Tool returns: <span class="result">{"temp": 22, "condition": "sunny"}</span>
+→ "It's sunny and 22°C in Tokyo."
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">4</span>
+  </div>
+</div>
+
+<script>
+const totalSteps = 4;
+let currentStep = 0;
+
+const codeBlock = document.getElementById('codeBlock');
+const descField = document.getElementById('descField');
+const insightBox = document.getElementById('insightBox');
+const flow1 = document.getElementById('flow1');
+const flow2 = document.getElementById('flow2');
+const flow3 = document.getElementById('flow3');
+const flow4 = document.getElementById('flow4');
+const arrow1 = document.getElementById('arrow1');
+const arrow2 = document.getElementById('arrow2');
+const arrow3 = document.getElementById('arrow3');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+stepTotal.textContent = totalSteps;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset
+  descField.classList.remove('highlight');
+  insightBox.classList.remove('visible');
+  flow1.classList.remove('visible');
+  flow2.classList.remove('visible');
+  flow3.classList.remove('visible');
+  flow4.classList.remove('visible');
+  arrow1.classList.remove('visible');
+  arrow2.classList.remove('visible');
+  arrow3.classList.remove('visible');
+
+  if (step === 0) {
+    // Step 1: Show tool definition with highlighted description
+    descField.classList.add('highlight');
+    insightBox.classList.add('visible');
+    flow1.classList.add('visible');
+  }
+
+  if (step === 1) {
+    // Step 2: Show tool selection
+    descField.classList.add('highlight');
+    insightBox.classList.add('visible');
+    flow1.classList.add('visible');
+    arrow1.classList.add('visible');
+    flow2.classList.add('visible');
+  }
+
+  if (step === 2) {
+    // Step 3: Show structured output
+    descField.classList.add('highlight');
+    insightBox.classList.add('visible');
+    flow1.classList.add('visible');
+    arrow1.classList.add('visible');
+    flow2.classList.add('visible');
+    arrow2.classList.add('visible');
+    flow3.classList.add('visible');
+  }
+
+  if (step === 3) {
+    // Step 4: Show execution and response
+    descField.classList.add('highlight');
+    insightBox.classList.add('visible');
+    flow1.classList.add('visible');
+    arrow1.classList.add('visible');
+    flow2.classList.add('visible');
+    arrow2.classList.add('visible');
+    flow3.classList.add('visible');
+    arrow3.classList.add('visible');
+    flow4.classList.add('visible');
+  }
+
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
