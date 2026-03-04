@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bash: The Universal Interface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-top: 48px;
+  }
+
+  /* === LEFT: WHY BASH WORKS === */
+  .why-section {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .section-title {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-icon {
+    font-size: 22px;
+  }
+
+  .why-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .why-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .why-icon {
+    flex-shrink: 0;
+    font-size: 18px;
+    margin-top: 2px;
+  }
+
+  .why-content h4 {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+  }
+
+  .why-content p {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* === RIGHT: RECOMMENDATION === */
+  .recommendation-section {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(0,0,0,0.2) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .rec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .rec-badge {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: rgba(168, 85, 247, 0.2);
+    padding: 6px 12px;
+    border-radius: 100px;
+  }
+
+  .comparison {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .compare-option {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .compare-option.cli {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .compare-option.mcp {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .option-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .option-title {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .option-tag {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  .option-tag.recommended {
+    background: var(--accent);
+    color: white;
+  }
+
+  .option-tag.alternative {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+
+  .option-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .benefit-tag {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11px;
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .cli .benefit-tag {
+    background: rgba(168, 85, 247, 0.2);
+    color: var(--accent-soft);
+  }
+
+  /* === CODE EXAMPLE === */
+  .code-example {
+    margin-top: 20px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+  }
+
+  .code-example .comment {
+    color: #6a7c93;
+  }
+
+  .code-example .command {
+    color: var(--accent-soft);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .content-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-content">
+  <div class="slide-inner">
+    <div class="section-label">Tools Development</div>
+    <h1>Bash: The Universal Interface</h1>
+    <p class="lead">Why CLI programs work better than MCP for LLM agents</p>
+
+    <div class="content-grid">
+      <!-- LEFT: WHY BASH WORKS -->
+      <div class="why-section">
+        <div class="section-title">
+          <span class="section-icon">💡</span>
+          Why Bash Works
+        </div>
+        <ul class="why-list">
+          <li class="why-item">
+            <span class="why-icon">📚</span>
+            <div class="why-content">
+              <h4>Training Data Advantage</h4>
+              <p>LLMs trained on massive bash/shell scripts</p>
+            </div>
+          </li>
+          <li class="why-item">
+            <span class="why-icon">🔗</span>
+            <div class="why-content">
+              <h4>Native Fluency</h4>
+              <p>Pipes, redirects, command chaining come naturally</p>
+            </div>
+          </li>
+          <li class="why-item">
+            <span class="why-icon">🧪</span>
+            <div class="why-content">
+              <h4>Human Testable</h4>
+              <p>Same CLI works for developers and agents</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- RIGHT: RECOMMENDATION -->
+      <div class="recommendation-section">
+        <div class="rec-header">
+          <div class="rec-badge">Recommendation</div>
+        </div>
+
+        <div class="comparison">
+          <!-- CLI OPTION -->
+          <div class="compare-option cli">
+            <div class="option-header">
+              <div class="option-title">CLI Programs</div>
+              <div class="option-tag recommended">✓ Recommended</div>
+            </div>
+            <ul class="option-benefits">
+              <li class="benefit-tag">Direct invocation</li>
+              <li class="benefit-tag">No protocol overhead</li>
+              <li class="benefit-tag">Works with any LLM</li>
+              <li class="benefit-tag">Easy to debug</li>
+            </ul>
+          </div>
+
+          <!-- MCP OPTION -->
+          <div class="compare-option mcp">
+            <div class="option-header">
+              <div class="option-title">MCP Servers</div>
+              <div class="option-tag alternative">Alternative</div>
+            </div>
+            <ul class="option-benefits">
+              <li class="benefit-tag">Protocol overhead</li>
+              <li class="benefit-tag">Server required</li>
+              <li class="benefit-tag">Standardized schema</li>
+              <li class="benefit-tag">Better for complex APIs</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="code-example">
+<span class="comment"># Agent directly calls your CLI</span>
+<span class="command">$</span> my-tool --input data.json --output result.json
+
+<span class="comment"># Chaining with pipes</span>
+<span class="command">$</span> my-tool analyze | jq '.insights' > report.txt
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

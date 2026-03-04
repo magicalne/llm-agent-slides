@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Tool: Spawning Sub-Agents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .two-column-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  /* === LEFT: PROMPT SNIPPET === */
+  .prompt-section {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 24px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.5s ease;
+  }
+
+  .prompt-section.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .prompt-label {
+    display: inline-block;
+    font-family: 'Urbanist', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: rgba(168, 85, 247, 0.15);
+    padding: 6px 12px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  .prompt-block {
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+  }
+
+  .prompt-block .comment {
+    color: #6a7c93;
+  }
+
+  .prompt-block .agent-name {
+    color: var(--accent-soft);
+  }
+
+  .prompt-block .keyword {
+    color: #ff79c6;
+  }
+
+  /* === RIGHT: FLOW DIAGRAM === */
+  .flow-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.5s ease;
+  }
+
+  .flow-section.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .flow-title {
+    font-family: 'Urbanist', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+  }
+
+  .flow-diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Urbanist', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .step-content {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .step-icon {
+    font-size: 18px;
+  }
+
+  .step-text {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  .step-text strong {
+    color: var(--accent-soft);
+    font-weight: 500;
+  }
+
+  .arrow-down {
+    width: 2px;
+    height: 16px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    margin-left: 15px;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 768px) {
+    .two-column-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-content">
+  <div class="slide-inner">
+    <div class="section-label">Tools Development</div>
+    <h1>Task Tool: Spawning Sub-Agents</h1>
+    <p class="lead">Delegate complex work to specialized autonomous agents</p>
+
+    <div class="two-column-grid">
+      <!-- LEFT: PROMPT SNIPPET -->
+      <div class="prompt-section">
+        <div class="prompt-label">System Prompt</div>
+        <div class="prompt-block">You have access to specialized sub-agents:
+
+<span class="agent-name">• bug-analyzer</span> — Expert debugger for deep execution flow analysis and root cause investigation
+
+<span class="agent-name">• code-reviewer</span> — Elite code review expert for modern AI-powered code analysis
+
+<span class="agent-name">• ui-sketcher</span> — Universal UI Blueprint Engineer
+
+<span class="comment">When to use: Complex tasks requiring specialized tools or multi-step autonomous work.
+
+Use the Agent tool to spawn a sub-agent with its specific role and full conversation context.</span></div>
+      </div>
+
+      <!-- RIGHT: FLOW DIAGRAM -->
+      <div class="flow-section">
+        <div class="flow-title">Inference Flow</div>
+        <div class="flow-diagram">
+          <div class="flow-step" data-step="1">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <span class="step-icon">📝</span>
+              <span class="step-text">User: <strong>"Analyze this bug"</strong></span>
+            </div>
+          </div>
+          <div class="arrow-down"></div>
+          <div class="flow-step" data-step="2">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <span class="step-icon">🎯</span>
+              <span class="step-text">LLM matches → <strong>bug-analyzer</strong></span>
+            </div>
+          </div>
+          <div class="arrow-down"></div>
+          <div class="flow-step" data-step="3">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <span class="step-icon">🚀</span>
+              <span class="step-text">Spawn agent with <strong>full context</strong></span>
+            </div>
+          </div>
+          <div class="arrow-down"></div>
+          <div class="flow-step" data-step="4">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <span class="step-icon">✓</span>
+              <span class="step-text">Agent returns <strong>result</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+const totalSteps = 2;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  const promptSection = document.querySelector('.prompt-section');
+  const flowSection = document.querySelector('.flow-section');
+
+  // Step 0: Show prompt (left)
+  // Step 1: Show flow diagram (right)
+  if (step === 0) {
+    promptSection.classList.add('visible');
+    flowSection.classList.remove('visible');
+  } else if (step === 1) {
+    promptSection.classList.add('visible');
+    flowSection.classList.add('visible');
+  }
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
