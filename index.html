@@ -260,6 +260,16 @@
   .loading.visible {
     opacity: 1;
   }
+
+  /* Preload frames (hidden) */
+  .preload-frame {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
 </style>
 </head>
 <body>
@@ -274,6 +284,10 @@
   <div class="slide-frame">
     <div class="loading" id="loading">Loading...</div>
     <iframe id="slideFrame" src=""></iframe>
+
+    <!-- Preload Frames (hidden, for instant navigation) -->
+    <iframe id="preloadPrev" class="preload-frame"></iframe>
+    <iframe id="preloadNext" class="preload-frame"></iframe>
 
     <!-- Navigation Zones -->
     <div class="nav-zone prev" id="navPrev" title="Previous slide (←)">
@@ -353,6 +367,8 @@ let currentStep = 0; // Current step within stepped slides
 // DOM Elements
 const presentation = document.getElementById('presentation');
 const slideFrame = document.getElementById('slideFrame');
+const preloadPrev = document.getElementById('preloadPrev');
+const preloadNext = document.getElementById('preloadNext');
 const progressFill = document.getElementById('progressFill');
 const slideCurrent = document.getElementById('slideCurrent');
 const slideTotal = document.getElementById('slideTotal');
@@ -405,7 +421,28 @@ function loadSlide(index) {
     loading.classList.remove('visible');
     // Notify slide of current step (0 for initial load)
     sendStepToSlide(0);
+    // Preload adjacent slides for instant navigation
+    preloadAdjacentSlides();
   };
+}
+
+// Preload adjacent slides in background
+function preloadAdjacentSlides() {
+  // Preload next slide
+  if (currentIndex < SLIDES.length - 1) {
+    const nextConfig = getSlideConfig(currentIndex + 1);
+    preloadNext.src = nextConfig.file;
+  } else {
+    preloadNext.src = '';
+  }
+
+  // Preload previous slide
+  if (currentIndex > 0) {
+    const prevConfig = getSlideConfig(currentIndex - 1);
+    preloadPrev.src = prevConfig.file;
+  } else {
+    preloadPrev.src = '';
+  }
 }
 
 // Send step message to slide iframe
