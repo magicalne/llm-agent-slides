@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resources</title>
+<link rel="stylesheet" href="../styles/fonts.css">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-resources {
+    display: flex;
+    flex-direction: column;
+    padding: 40px 56px;
+    height: 100%;
+  }
+
+  .slide-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .slide-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* === RESOURCES GRID === */
+  .resources-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    flex: 1;
+  }
+
+  .resource-section {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+  }
+
+  .resource-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .resource-section:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .section-icon {
+    font-size: 20px;
+  }
+
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .resource-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .resource-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .resource-item:hover {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  /* Highlighted items keep their original style but become clickable */
+  .resource-item.highlighted {
+    background: rgba(168, 85, 247, 0.08);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+  }
+
+  .resource-item.highlighted:hover {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.4);
+  }
+
+  .resource-bullet {
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 3px;
+    font-size: 12px;
+  }
+
+  .resource-content {
+    flex: 1;
+  }
+
+  .resource-name {
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1.4;
+  }
+
+  .resource-desc {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.3;
+  }
+
+  /* Highlighted items */
+  .resource-item.highlighted .resource-name {
+    color: var(--accent);
+  }
+
+  .resource-item.highlighted .resource-name a {
+    color: var(--accent);
+  }
+
+  /* === BOTTOM THANK YOU === */
+  .thank-you {
+    margin-top: 24px;
+    padding: 20px 28px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease 0.4s;
+  }
+
+  .thank-you.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .thank-you .main-text {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .thank-you .sub-text {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .thank-you .highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Q&A Badge */
+  .qa-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+
+  .qa-badge .icon {
+    font-size: 16px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .resources-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-resources">
+  <div class="slide-header">
+    <div class="section-label">Resources</div>
+    <h1>Further Learning</h1>
+    <p class="subtitle">Curated podcasts and readings to deepen your understanding</p>
+  </div>
+
+  <div class="resources-grid">
+    <!-- Podcasts -->
+    <div class="resource-section" id="section1">
+      <div class="section-header">
+        <span class="section-icon">🎙️</span>
+        <h2 class="section-title">Podcasts</h2>
+      </div>
+      <div class="resource-list">
+        <a href="https://youtu.be/AmdLVWMdjOk" target="_blank" class="resource-item highlighted">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">Boris Cherny (Creator of Claude Code) On What Grew His Career And Building at Anthropic</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/EV7WhVT270Q" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">State of AI in 2026: LLMs, Coding, Scaling Laws, China, Agents, GPUs, AGI | Lex Fridman Podcast #490</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/YFjfBk8HI5o" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">OpenClaw: The Viral AI Agent that Broke the Internet - Peter Steinberger | Lex Fridman Podcast #491</div>
+          </div>
+        </a>
+        <a href="https://www.youtube.com/watch?v=zwfE6J2BIR4" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">Language Agents (Shunyu Yao PhD Defense)</div>
+          </div>
+        </a>
+        <a href="https://www.youtube.com/watch?v=0zXSrsKlm5A" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">The Minds of Modern AI: Jensen Huang, Geoffrey Hinton, Yann LeCun & the AI Vision of the Future</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/21EYKqUsPfg" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">Richard Sutton – Father of RL thinks LLMs are a dead end</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/I0DrcsDf3Os" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">翁家翌：OpenAI，GPT，强化学习，Infra，后训练，天授，tuixue，开源，CMU，清华｜WhynotTV Podcast #4</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/3Oad7PtEMVk" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">E226｜聊聊DeepMind创始人哈萨比斯：一个科学家与失控的AI竞赛</div>
+          </div>
+        </a>
+        <a href="https://youtu.be/ECu8d7kWbeQ" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">E215 ｜ 资本视角聊聊万亿大基建钱从哪儿来，以及电力破局的六条路径</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Readings -->
+    <div class="resource-section" id="section2">
+      <div class="section-header">
+        <span class="section-icon">📖</span>
+        <h2 class="section-title">Readings</h2>
+      </div>
+      <div class="resource-list">
+        <a href="https://sketch.dev/blog/agent-loop" target="_blank" class="resource-item highlighted">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">sketch.dev/blog/agent-loop</div>
+          </div>
+        </a>
+        <a href="https://ampcode.com/notes/how-to-build-an-agent" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">ampcode.com/notes/how-to-build-an-agent</div>
+          </div>
+        </a>
+        <a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/</div>
+          </div>
+        </a>
+        <a href="https://www.zhihu.com/question/1949437533063706212/answer/1962261158540076466" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">zhihu.com/question/1949437533063706212</div>
+          </div>
+        </a>
+        <a href="https://ysymyth.github.io/The-Second-Half/" target="_blank" class="resource-item">
+          <span class="resource-bullet">→</span>
+          <div class="resource-content">
+            <div class="resource-name">ysymyth.github.io/The-Second-Half/</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thank You -->
+  <div class="thank-you" id="thankYou">
+    <div class="main-text">Thank You!</div>
+    <div class="sub-text">Questions? Let's discuss <span class="highlight">→</span></div>
+    <div class="qa-badge">
+      <span class="icon">💬</span>
+      <span>Q&A</span>
+    </div>
+  </div>
+</div>
+
+<script>
+const totalSteps = 2;
+let currentStep = 0;
+
+const section1 = document.getElementById('section1');
+const section2 = document.getElementById('section2');
+const thankYou = document.getElementById('thankYou');
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset
+  section1.classList.remove('visible');
+  section2.classList.remove('visible');
+  thankYou.classList.remove('visible');
+
+  if (step === 0) {
+    // Step 1: Show resource sections
+    setTimeout(() => section1.classList.add('visible'), 100);
+    setTimeout(() => section2.classList.add('visible'), 250);
+  }
+
+  if (step === 1) {
+    // Step 2: Show all + thank you
+    section1.classList.add('visible');
+    section2.classList.add('visible');
+    setTimeout(() => {
+      thankYou.classList.add('visible');
+    }, 300);
+  }
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>

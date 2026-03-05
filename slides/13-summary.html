@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Key Takeaways</title>
+<link rel="stylesheet" href="../styles/fonts.css">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-summary {
+    display: flex;
+    flex-direction: column;
+    padding: 48px 64px;
+    height: 100%;
+  }
+
+  .slide-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .slide-header .section-label {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .slide-header h1 {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .slide-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-secondary);
+  }
+
+  /* === INSIGHTS GRID === */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    flex: 1;
+  }
+
+  .insight-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+  }
+
+  .insight-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .insight-card:hover {
+    background: var(--bg-card-hover);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .insight-number {
+    font-family: var(--font-heading);
+    font-size: 48px;
+    font-weight: 800;
+    color: rgba(255,255,255,0.03);
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    line-height: 1;
+  }
+
+  .insight-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .insight-card:nth-child(1) .insight-icon { color: var(--accent); }
+  .insight-card:nth-child(2) .insight-icon { color: #4ADE80; }
+  .insight-card:nth-child(3) .insight-icon { color: #60A5FA; }
+
+  .insight-title {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+
+  .insight-card:nth-child(1) .insight-title { color: var(--accent); }
+  .insight-card:nth-child(2) .insight-title { color: #4ADE80; }
+  .insight-card:nth-child(3) .insight-title { color: #60A5FA; }
+
+  .insight-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    flex: 1;
+  }
+
+  .insight-list li {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .insight-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  .insight-quote {
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid;
+    border-radius: 0 6px 6px 0;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .insight-card:nth-child(1) .insight-quote { border-color: var(--accent); }
+  .insight-card:nth-child(2) .insight-quote { border-color: #4ADE80; }
+  .insight-card:nth-child(3) .insight-quote { border-color: #60A5FA; }
+
+  .insight-quote .highlight {
+    font-weight: 500;
+  }
+
+  /* === BOTTOM HIGHLIGHT === */
+  .bottom-highlight {
+    margin-top: 32px;
+    padding: 20px 28px;
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.05) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease 0.3s;
+  }
+
+  .bottom-highlight.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .highlight-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .highlight-content {
+    flex: 1;
+  }
+
+  .highlight-text {
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  .highlight-text .accent {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Step indicator */
+  .step-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 32px;
+    font-family: var(--font-heading);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .step-indicator .current {
+    color: var(--accent);
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-summary">
+  <div class="slide-header">
+    <div class="section-label">Summary</div>
+    <h1>3 Things to Remember</h1>
+    <p class="subtitle">The core insights from everything we've covered</p>
+  </div>
+
+  <div class="insights-grid">
+    <!-- Insight 1: The ARC Framework -->
+    <div class="insight-card" id="card1">
+      <span class="insight-number">01</span>
+      <div class="insight-icon">△</div>
+      <h2 class="insight-title">The ARC Framework</h2>
+      <ul class="insight-list">
+        <li><strong>Agentic:</strong> Tool use & external interaction</li>
+        <li><strong>Reasoning:</strong> Multi-step planning & problem solving</li>
+        <li><strong>Coding:</strong> The most powerful general-purpose capability</li>
+      </ul>
+      <div class="insight-quote">
+        "<span class="highlight">Code is the universal interface</span> — if it can code, it can do almost anything."
+      </div>
+    </div>
+
+    <!-- Insight 2: Context Engineering -->
+    <div class="insight-card" id="card2">
+      <span class="insight-number">02</span>
+      <div class="insight-icon">⚡</div>
+      <h2 class="insight-title">Context Engineering</h2>
+      <ul class="insight-list">
+        <li>Static prefix → Cache hits → 80%+ tokens saved</li>
+        <li>Move dynamic data to the <strong>END</strong> of messages</li>
+        <li>Spawn sub-agents for isolated work contexts</li>
+        <li>Compression is <em>last resort</em> (loses debug details)</li>
+      </ul>
+      <div class="insight-quote">
+        "A well-engineered context window enables <span class="highlight">infinite effective scale</span>."
+      </div>
+    </div>
+
+    <!-- Insight 3: Start Simple -->
+    <div class="insight-card" id="card3">
+      <span class="insight-number">03</span>
+      <div class="insight-icon">🚀</div>
+      <h2 class="insight-title">Start Simple, Ship Fast</h2>
+      <ul class="insight-list">
+        <li>Bash tool > MCP for most use cases</li>
+        <li>Tool calling = structured output decisions</li>
+        <li>Build in the open — iterate on real problems</li>
+      </ul>
+      <div class="insight-quote">
+        "The <span class="highlight">best agent is the one that ships</span> and solves real problems."
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Highlight -->
+  <div class="bottom-highlight" id="bottomHighlight">
+    <span class="highlight-icon">💡</span>
+    <div class="highlight-content">
+      <div class="highlight-text">
+        The agentic coding era arrived in December 2025. Developers are now <span class="accent">orchestrators</span>.
+        Natural language has become the hottest programming language. <span class="accent">You're not early anymore — you're on time.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-indicator">
+    <span class="current" id="stepCurrent">1</span> / <span id="stepTotal">2</span>
+  </div>
+</div>
+
+<script>
+const totalSteps = 2;
+let currentStep = 0;
+
+const card1 = document.getElementById('card1');
+const card2 = document.getElementById('card2');
+const card3 = document.getElementById('card3');
+const bottomHighlight = document.getElementById('bottomHighlight');
+const stepCurrent = document.getElementById('stepCurrent');
+const stepTotal = document.getElementById('stepTotal');
+
+stepTotal.textContent = totalSteps;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Reset
+  card1.classList.remove('visible');
+  card2.classList.remove('visible');
+  card3.classList.remove('visible');
+  bottomHighlight.classList.remove('visible');
+
+  if (step === 0) {
+    // Step 1: Show cards one by one
+    setTimeout(() => card1.classList.add('visible'), 200);
+    setTimeout(() => card2.classList.add('visible'), 500);
+    setTimeout(() => card3.classList.add('visible'), 800);
+  }
+
+  if (step === 1) {
+    // Step 2: Show all + bottom highlight
+    card1.classList.add('visible');
+    card2.classList.add('visible');
+    card3.classList.add('visible');
+    setTimeout(() => bottomHighlight.classList.add('visible'), 400);
+  }
+
+  stepCurrent.textContent = step + 1;
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
