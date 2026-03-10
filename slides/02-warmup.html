@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warm Up Questions</title>
+<link rel="stylesheet" href="../styles/fonts.css">
+<link rel="stylesheet" href="../styles/theme.css">
+<style>
+  .slide-warmup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 48px;
+  }
+
+  .warmup-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .warmup-header .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .warmup-header h1 {
+    font-family: var(--font-heading);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .warmup-header .subtitle {
+    font-family: var(--font-body);
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  /* Question Container */
+  .question-container {
+    width: 100%;
+    max-width: 800px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 40px 48px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+    display: none;
+  }
+
+  .question-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+  }
+
+  .question-number {
+    font-family: var(--font-heading);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .question-text {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  /* Answer Options */
+  .options-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .option-chip {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 16px 24px;
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: default;
+    transition: all 0.3s ease;
+  }
+
+  .option-chip:hover {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: var(--accent);
+  }
+
+  .option-chip.highlight {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Progress Dots */
+  .progress-dots {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    transition: all 0.3s ease;
+  }
+
+  .dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+    transform: scale(1.2);
+  }
+
+  .dot.completed {
+    background: rgba(168, 85, 247, 0.5);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .question-text {
+      font-size: 22px;
+    }
+    .option-chip {
+      padding: 12px 18px;
+      font-size: 14px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="slide slide-warmup">
+  <div class="warmup-header">
+    <div class="icon">☕</div>
+    <h1>Warm Up</h1>
+    <p class="subtitle">Let's get to know each other</p>
+  </div>
+
+  <div class="question-container">
+    <!-- Question 1 -->
+    <div class="question-card" id="q1">
+      <div class="question-number">Question 1 of 5</div>
+      <div class="question-text">What is your go-to model?</div>
+      <div class="options-grid">
+        <div class="option-chip highlight">Claude Opus 4.6</div>
+        <div class="option-chip highlight">Gemini Pro 3.1</div>
+        <div class="option-chip highlight">GPT 5.4</div>
+        <div class="option-chip highlight">Other</div>
+      </div>
+    </div>
+
+    <!-- Question 2 -->
+    <div class="question-card" id="q2">
+      <div class="question-number">Question 2 of 5</div>
+      <div class="question-text">What is your favorite agentic application?</div>
+      <div class="options-grid">
+        <div class="option-chip highlight">Claude Code</div>
+        <div class="option-chip highlight">Cursor</div>
+        <div class="option-chip highlight">OpenClaw</div>
+        <div class="option-chip highlight">Manus</div>
+        <div class="option-chip highlight">Other</div>
+      </div>
+    </div>
+
+    <!-- Question 3 -->
+    <div class="question-card" id="q3">
+      <div class="question-number">Question 3 of 5</div>
+      <div class="question-text">How many tokens do you burn monthly?</div>
+      <div class="options-grid">
+        <div class="option-chip highlight">~1M</div>
+        <div class="option-chip highlight">~10M</div>
+        <div class="option-chip highlight">~100M</div>
+        <div class="option-chip highlight">~1B+</div>
+      </div>
+    </div>
+
+    <!-- Question 4 -->
+    <div class="question-card" id="q4">
+      <div class="question-number">Question 4 of 5</div>
+      <div class="question-text">How many years until AI can replace you?</div>
+      <div class="options-grid">
+        <div class="option-chip highlight">1-2 years</div>
+        <div class="option-chip highlight">3-5 years</div>
+        <div class="option-chip highlight">5-10 years</div>
+        <div class="option-chip highlight">Never</div>
+      </div>
+    </div>
+
+    <!-- Question 5 -->
+    <div class="question-card" id="q5">
+      <div class="question-number">Question 5 of 5</div>
+      <div class="question-text">How many tokens can a human generate per day?</div>
+      <div class="options-grid">
+        <div class="option-chip highlight">~1K</div>
+        <div class="option-chip highlight">~10K</div>
+        <div class="option-chip highlight">~100K</div>
+        <div class="option-chip highlight">~1M</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Dots -->
+  <div class="progress-dots">
+    <div class="dot" id="dot1"></div>
+    <div class="dot" id="dot2"></div>
+    <div class="dot" id="dot3"></div>
+    <div class="dot" id="dot4"></div>
+    <div class="dot" id="dot5"></div>
+  </div>
+</div>
+
+<script>
+const totalSteps = 5;
+let currentStep = 0;
+
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  currentStep = step;
+
+  // Hide all questions
+  for (let i = 1; i <= totalSteps; i++) {
+    const card = document.getElementById(`q${i}`);
+    const dot = document.getElementById(`dot${i}`);
+    card.classList.remove('visible');
+    dot.classList.remove('active', 'completed');
+  }
+
+  // Show current question with animation
+  const currentCard = document.getElementById(`q${step + 1}`);
+  setTimeout(() => currentCard.classList.add('visible'), 50);
+
+  // Update dots
+  for (let i = 0; i < step; i++) {
+    document.getElementById(`dot${i + 1}`).classList.add('completed');
+  }
+  document.getElementById(`dot${step + 1}`).classList.add('active');
+}
+
+// Listen for postMessage from parent
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'goToStep') {
+    goToStep(event.data.step);
+  }
+});
+
+// Initial state
+goToStep(0);
+</script>
+
+</body>
+</html>
